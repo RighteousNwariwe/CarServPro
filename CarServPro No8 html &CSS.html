@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaboration Tools</title>
+    <style>
+        /* Simple Black and White Theme */
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+
+        .chat-box {
+            border: 1px solid white;
+            padding: 10px;
+            height: 300px;
+            overflow-y: scroll;
+            background-color: #333;
+            margin-bottom: 20px;
+        }
+
+        .chat-message {
+            margin-bottom: 10px;
+            color: #ccc;
+        }
+
+        .message-time {
+            font-size: 0.8em;
+            color: #888;
+        }
+
+        input[type=text], textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid white;
+            background-color: #222;
+            color: white;
+        }
+
+        button {
+            background-color: white;
+            color: black;
+            border: 1px solid white;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ccc;
+        }
+
+        h2, h3 {
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Collaboration Tools: Owners & Dealership Employees</h2>
+
+        <!-- Chat Section -->
+        <h3>Direct Messaging</h3>
+        <div class="chat-box" id="chatBox"></div>
+
+        <input id="userName" type="text" placeholder="Your Name">
+        <textarea id="message" rows="2" placeholder="Enter your message..."></textarea>
+        <select id="userRole">
+            <option value="Owner">Owner</option>
+            <option value="Employee">Employee</option>
+        </select><br>
+        <button onclick="sendMessage()">Send Message</button>
+
+        <hr>
+
+        <!-- Message Board Section -->
+        <h3>Message Board (Public Updates)</h3>
+        <div id="messageBoard"></div>
+
+        <input id="boardUserName" type="text" placeholder="Your Name">
+        <textarea id="boardMessage" rows="2" placeholder="Post an update or a question..."></textarea>
+        <select id="boardUserRole">
+            <option value="Owner">Owner</option>
+            <option value="Employee">Employee</option>
+        </select><br>
+        <button onclick="postToBoard()">Post to Board</button>
+    </div>
+
+
+    <!-- Include Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-database.js"></script>
+    <script src="app.js">
+        // Your Firebase configuration from the Firebase console
+const firebaseConfig = {
+    apiKey: "your-api-key",
+    authDomain: "your-auth-domain",
+    databaseURL: "your-database-url",
+    projectId: "your-project-id",
+    storageBucket: "your-storage-bucket",
+    messagingSenderId: "your-messaging-sender-id",
+    appId: "your-app-id"
+};
+
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// Send message to chat
+function sendMessage() {
+    const userName = document.getElementById('userName').value;
+    const messageText = document.getElementById('message').value;
+    const userRole = document.getElementById('userRole').value;
+    const timeStamp = new Date().toLocaleTimeString();
+
+    if (userName && messageText) {
+        db.ref('chatMessages').push({
+            userName: userName,
+            userRole: userRole,
+            messageText: messageText,
+            timeStamp: timeStamp
+        });
+        document.getElementById('message').value = ''; // Clear input
+    }
+}
+
+// Post message to the board
+function postToBoard() {
+    const userName = document.getElementById('boardUserName').value;
+    const messageText = document.getElementById('boardMessage').value;
+    const userRole = document.getElementById('boardUserRole').value;
+    const timeStamp = new Date().toLocaleTimeString();
+
+    if (userName && messageText) {
+        db.ref('messageBoard').push({
+            userName: userName,
+            userRole: userRole,
+            messageText: messageText,
+            timeStamp: timeStamp
+        });
+        document.getElementById('boardMessage').value = ''; // Clear input
+    }
+}
+
+// Display chat messages
+db.ref('chatMessages').on('child_added', function(snapshot) {
+    const chatBox = document.getElementById('chatBox');
+    const data = snapshot.val();
+    const messageElement = `<div class="chat-message"><strong>${data.userRole} ${data.userName}:</strong> ${data.messageText} <span class="message-time">(${data.timeStamp})</span></div>`;
+    chatBox.innerHTML += messageElement;
+    chatBox.scrollTop = chatBox.scrollHeight;
+});
+
+// Display message board posts
+db.ref('messageBoard').on('child_added', function(snapshot) {
+    const messageBoard = document.getElementById('messageBoard');
+    const data = snapshot.val();
+    const messageElement = `<div class="chat-message"><strong>${data.userRole} ${data.userName}:</strong> ${data.messageText} <span class="message-time">(${data.timeStamp})</span></div>`;
+    messageBoard.innerHTML += messageElement;
+});
+
+    </script>
+</body>
+</html>

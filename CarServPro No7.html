@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Repair Cart</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #333;
+        }
+
+        button {
+            background-color: white;
+            color: black;
+            border: 1px solid white;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ccc;
+        }
+
+        h2 {
+            color: #ccc;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.x/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.x/firebase-firestore.js"></script>
+
+    <div class="container">
+        <h2>Available Car Repair Options</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Price</th>
+                    <th>Time Required (hrs)</th>
+                    <th>Advantages</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="repair-options">
+                <!-- Repair options will be populated here by JS -->
+            </tbody>
+        </table>
+
+        <h2>Your Repair Cart</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Price</th>
+                    <th>Time Required (hrs)</th>
+                    <th>Advantages</th>
+                </tr>
+            </thead>
+            <tbody id="cart-items">
+                <!-- Cart items will be populated here by JS -->
+            </tbody>
+        </table>
+
+        <h3>Total Price: <span id="total-price">$0.00</span></h3>
+    </div>
+
+    <script type="module">
+        // Firebase configuration
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.x/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/9.x/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "your-api-key",
+            authDomain: "your-project-id.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project-id.appspot.com",
+            messagingSenderId: "your-sender-id",
+            appId: "your-app-id"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const repairOptionsTable = document.getElementById('repair-options');
+        const cartItemsTable = document.getElementById('cart-items');
+        let totalPriceEl = document.getElementById('total-price');
+        let cart = [];
+
+        // Fetch repair options from Firebase
+        async function fetchRepairOptions() {
+            const querySnapshot = await getDocs(collection(db, "repairOptions"));
+            querySnapshot.forEach((doc) => {
+                const repairOption = doc.data();
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${repairOption.serviceName}</td>
+                    <td>${repairOption.price.toFixed(2)}</td>
+                    <td>${repairOption.timeRequired}</td>
+                    <td>${repairOption.advantages}</td>
+                    <td><button onclick="addToCart('${doc.id}', ${repairOption.price})">Add to Cart</button></td>
+                `;
+                repairOptionsTable.appendChild(tr);
+            });
+        }
+
+        // Add item to cart
+        window.addToCart = function(id, price) {
+            cart.push({ id, price });
+            renderCart();
+        }
+
+        // Render cart items and calculate total
+        function renderCart() {
+            cartItemsTable.innerHTML = '';
+            let totalPrice = 0;
+            cart.forEach(async (item) => {
+                const docRef = collection(db, "repairOptions");
+                const docSnap = await getDoc(doc(db, docRef, item.id));
+                const repairOption = docSnap.data();
+                totalPrice += item.price;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${repairOption.serviceName}</td>
+                    <td>${repairOption.price.toFixed(2)}</td>
+                    <td>${repairOption.timeRequired}</td>
+                    <td>${repairOption.advantages}</td>
+                `;
+                cartItemsTable.appendChild(tr);
+            });
+            totalPriceEl.textContent = `$${totalPrice.toFixed(2)}`;
+        }
+
+        // Initialize the app
+        fetchRepairOptions();
+    </script>
+
+    
+</body>
+</html>
