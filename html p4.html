@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Processing & Quotation System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Transaction Processing & Quotation System</h1>
+    
+    <!-- Customer Request Form -->
+    <div class="request-form">
+        <h2>Submit Repair Request</h2>
+        <input type="text" id="customerName" placeholder="Customer Name">
+        <input type="text" id="carModel" placeholder="Car Model">
+        <textarea id="problemDescription" placeholder="Problem Description"></textarea>
+        <button id="submitRequestBtn">Submit Request</button>
+    </div>
+    
+    <!-- Service Quote Form (for employees) -->
+    <div class="quote-form">
+        <h2>Add Service Quote</h2>
+        <input type="text" id="requestId" placeholder="Request ID">
+        <input type="number" id="quoteAmount" placeholder="Quote Amount">
+        <select id="priority">
+            <option value="Low">Low Priority</option>
+            <option value="Medium">Medium Priority</option>
+            <option value="High">High Priority</option>
+        </select>
+        <button id="addQuoteBtn">Add Quote</button>
+    </div>
+    
+    <!-- Requests and Quotes Display -->
+    <div class="requests-list">
+        <h2>Customer Requests</h2>
+        <table id="requestsTable">
+            <thead>
+                <tr>
+                    <th>Request ID</th>
+                    <th>Customer</th>
+                    <th>Car Model</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Customer requests will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="quotes-list">
+        <h2>Service Quotes</h2>
+        <table id="quotesTable">
+            <thead>
+                <tr>
+                    <th>Request ID</th>
+                    <th>Quote Amount</th>
+                    <th>Priority</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Service quotes will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

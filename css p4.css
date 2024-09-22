@@ -1,0 +1,41 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f0f0f0;
+}
+h1, h2 {
+    text-align: center;
+}
+.request-form, .quote-form {
+    margin: 20px auto;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    width: 50%;
+    text-align: center;
+}
+.request-form input, .quote-form input, .quote-form select, textarea {
+    width: 80%;
+    padding: 8px;
+    margin: 10px 0;
+}
+button {
+    padding: 10px 20px;
+    cursor: pointer;
+}
+.requests-list, .quotes-list {
+    width: 80%;
+    margin: 20px auto;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+th {
+    background-color: #f4f4f4;
+}

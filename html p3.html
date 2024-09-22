@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Parts Inventory Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Car Parts Inventory Management</h1>
+    <div class="inventory-form">
+        <input type="text" id="partName" placeholder="Part Name">
+        <input type="number" id="quantity" placeholder="Quantity">
+        <select id="category">
+            <option value="common">Common</option>
+            <option value="hard-to-find">Hard-to-find</option>
+        </select>
+        <button id="addPartBtn">Add Part</button>
+    </div>
+    <div class="inventory-list">
+        <h2>Inventory</h2>
+        <table id="inventoryTable">
+            <thead>
+                <tr>
+                    <th>Part Name</th>
+                    <th>Quantity</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Inventory items will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
