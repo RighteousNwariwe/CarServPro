@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Maintenance Suggestions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        form {
+            margin: 20px;
+        }
+        label, input {
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Enter Car Details</h2>
+    <form id="carForm">
+        <label for="make">Make:</label>
+        <input type="text" id="make" required>
+
+        <label for="model">Model:</label>
+        <input type="text" id="model" required>
+
+        <label for="mileage">Mileage (km):</label>
+        <input type="number" id="mileage" required>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <h3 id="suggestionsLabel">Suggestions</h3>
+    <ul id="suggestions"></ul>
+
+    <!-- Link to the external JavaScript file -->
+    <script src="script.js"></script>
+</body>
+</html>
