@@ -109,4 +109,30 @@ db.collection('quotes').onSnapshot(snapshot => {
 
 // Function to delete quote
 function deleteQuote(id) {
-    db.collection
+    db.collection('quotes').doc(id).delete().then(() => {
+        alert('Quote deleted successfully');
+    }).catch(err => console.error('Error deleting quote:', err));
+}
+
+// Function to link requests with quotes for easy management
+function linkRequestsAndQuotes() {
+    db.collection('requests').get().then(requestSnapshot => {
+        requestSnapshot.forEach(requestDoc => {
+            const requestId = requestDoc.id;
+            db.collection('quotes').where('requestId', '==', requestId).get().then(quoteSnapshot => {
+                if (!quoteSnapshot.empty) {
+                    const row = document.querySelector(`tr[data-id="${requestId}"]`);
+                    const quoteData = quoteSnapshot.docs[0].data();
+                    const quoteAmount = quoteData.quoteAmount;
+                    const priority = quoteData.priority;
+                    const cell = document.createElement('td');
+                    cell.innerHTML = `Quote: $${quoteAmount} (Priority: ${priority})`;
+                    row.appendChild(cell);
+                }
+            });
+        });
+    });
+}
+
+// Call the linking function on page load
+linkRequestsAndQuotes();
