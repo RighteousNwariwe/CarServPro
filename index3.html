@@ -1,0 +1,46 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Calender</title>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+    <script>
+
+    function createDialog(title, text) {
+   return $("<div class='dialog' title='" + title + "'><p><input type='time'  min='00:00' max='23:59'></p></div>")
+   .dialog({
+       resizable: true,
+       height: 150,
+       modal: true,
+
+       });
+}
+
+
+    $(function() {
+      $( "#openwindow" ).dialog({
+       open: function(event, ui) {
+         $('#divInDialog').load('demo.html', function() {
+           alert('Load was performed.');
+         });
+        }
+      });
+
+  $( "#datepicker" ).datepicker({
+    onSelect: function(date) {
+      createDialog(date,date);
+    }
+  });
+});
+  </script>
+
+</head>
+<body>
+
+ <div id="datepicker"> </div>
+
+</body>
+</html>
