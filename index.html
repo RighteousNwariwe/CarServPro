@@ -1,36 +1,547 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Calendar</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css">
-  <script src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
-  <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Online Store</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css" media="screen" type="text/css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.store.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div class="modal-dialog text-center">
-	<div class="col-sm-8 main-section">
-		<div class="modal-content">
-			<div class="col-12 user-img">
-				<img src="img/stu.png" width="200" height="200">
 
-			</div>
-		<form class="col-12">
-			<div class="form-group">
-				<input type="text" class="form-control" placeholder="Enter username">
-			</div>
-			<div class="form-group">
-				<input type="password" class="form-control" placeholder="Enter password">
-			</div>
-			<button type="Submit" class="btn"><a href="index3.html" style="color:white"><i class="fas fa-sign-in-alt"></i>Login</button>
-		</form>
-		<div class="col-12 forgot">
-			<a href="#">Forgot Password?</a>
-		</div>
-	</div>
+<!-- Navigation Section -->
+<section id="nav-bar">
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="topnav">
+            <a style="color:black;" class="active" href="#home">Home</a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a style="color:black;" class="nav-link" href="#featured-categories">Products</a></li>
+                <li class="nav-item"><a style="color:black;" class="nav-link" href="cart.html">Cart</a></li>
+                <li class="nav-item"><a style="color:black;" class="nav-link" href="#about">About Us</a></li>
+                <li class="nav-item"><a style="color:black;" class="nav-link" href="#services">Our Services</a></li>
+
+                <li class="nav-item"><a style="color:black;" class="nav-link" href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+</section>
+
+<!-- Carousel Section -->
+<div class="slider">
+    <div id="carouselExampleInterval" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active" data-interval="10000">
+                <img src="img1.jpg" class="d-block w-100" alt="..." style="width:auto;height:800px;">
+            </div>
+            <div class="carousel-item" data-interval="2000">
+                <img src="img2.jpg" class="d-block w-100" alt="..." style="width:auto;height:800px;">
+            </div>
+            <div class="carousel-item">
+                <img src="img3.jpg" class="d-block w-100" alt="..." style="width:auto;height:800px;">
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleInterval" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleInterval" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
 </div>
+
+<!-- Featured Categories Section -->
+<section class="featured-categories">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3"><img src="img4.jpg" alt="Category 1"></div>
+            <div class="col-md-3"><img src="img5.jpg" alt="Category 2"></div>
+            <div class="col-md-3"><img src="img6.jpg" alt="Category 3"></div>
+            <div class="col-md-3"><img src="img7.jpg" alt="Category 4"></div>
+        </div>
+    </div>
+</section>
+
+<!-- New Arrivals Section -->
+<section class="new-arrivals">
+    <div id="site">
+        <div class="container">
+            <div class="title-box"><h2>New Arrivals</h2></div>
+            <div class="row">
+                <!-- Product 1 -->
+                <div class="col-md-3">
+                    <div class="product-top"><img src="img8.jpg" alt="Product 1">
+                        <div class="overlay-right">
+                            <button type="button" class="btn btn-secondary" title="Quick Shop"><i class="fa fa-eye"></i></button>
+                            <button type="button" class="btn btn-secondary" title="Add to Wishlist"><i class="fa fa-heart-o"></i></button>
+                            <button type="button" class="btn btn-secondary" title="Add to Cart"><i class="fa fa-shopping-cart"></i></button>
+                        </div>
+                    </div>
+                    <div class="product-bottom text-center">
+                        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i>
+                        <p class="product-price">€10</p>
+                        <form class="add-to-cart" action="cart.html" method="post">
+                            <div><label for="qty-2">Quantity</label><input type="text" name="qty-2" id="qty-2" class="qty" value="1" /></div>
+                            <p><input type="submit" value="Add to cart" class="btn" /></p>
+                        </form>
+                    </div>
+                </div>
+                <!-- Add more products in similar manner -->
+                <div class="col-md-3">
+                    <div class="product-top">
+                        <img src="img9.jpg">
+                        <div class="overlay-right">
+                            <button type="button" class="btn btn-secondary" title="Quick Shop">
+                            <i class="fa fa-eye"></i>
+                            </button>
+                            
+                            <button type="button" class="btn btn-secondary" title="Add to Wishlist">
+                            <i class="fa fa-heart-o"></i>
+                            </button>
+                            
+                            <button type="button" class="btn btn-secondary" title="Add to Cart">
+                            <i class="fa fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="product-bottom text-center">
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star-half-o"></i>
+                    <h3> </h3>
+                    <div class="product-description" data-name=" " data-price="15">
+                        
+                        <p class="product-price">&euro; 15</p>
+                        <form class="add-to-cart" action="cart.html" method="post">
+                                    <div>
+                                        <label for="qty-2">Quantity</label>
+                                        <input type="text" name="qty-2" id="qty-2" class="qty" value="1" />
+                                    </div>
+                                    <p><input type="submit" value="Add to cart" class="btn" /></p>
+                                </form>
+                                
+                    </div>
+                    </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="product-top">
+                            <img src="img10.jpg">
+                            <div class="overlay-right">
+                                <button type="button" class="btn btn-secondary" title="Quick Shop">
+                                <i class="fa fa-eye"></i>
+                                </button>
+                                
+                                <button type="button" class="btn btn-secondary" title="Add to Wishlist">
+                                <i class="fa fa-heart-o"></i>
+                                </button>
+                                
+                                <button type="button" class="btn btn-secondary" title="Add to Cart">
+                                <i class="fa fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="product-bottom text-center">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-half-o"></i>
+                        <h3></h3>
+                        <div class="product-description" data-name="" data-price="14">
+                            
+                            <p class="product-price">&euro; 14</p>
+                            <form class="add-to-cart" action="cart.html" method="post">
+                                        <div>
+                                            <label for="qty-2">Quantity</label>
+                                            <input type="text" name="qty-2" id="qty-2" class="qty" value="1" />
+                                        </div>
+                                        <p><input type="submit" value="Add to cart" class="btn" /></p>
+                                    </form>
+                                    
+                        </div>
+                        </div>
+                        </div>
+            
+            
+            
+                        <div class="col-md-3">
+                        <div class="product-top">
+                            <img src="img11.jpg">
+                            <div class="overlay-right">
+                                <button type="button" class="btn btn-secondary" title="Quick Shop">
+                                <i class="fa fa-eye"></i>
+                                </button>
+                                
+                                <button type="button" class="btn btn-secondary" title="Add to Wishlist">
+                                <i class="fa fa-heart-o"></i>
+                                </button>
+                                
+                                <button type="button" class="btn btn-secondary" title="Add to Cart">
+                                <i class="fa fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="product-bottom text-center">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-half-o"></i>
+                        <h3></h3>
+                        <div class="product-description" data-name="" data-price="30">
+                            
+                            <p class="product-price">&euro; 30</p>
+                            <form class="add-to-cart" action="cart.html" method="post">
+                                        <div>
+                                            <label for="qty-2">Quantity</label>
+                                            <input type="text" name="qty-2" id="qty-2" class="qty" value="1" />
+                                        </div>
+                                        <p><input type="submit" value="Add to cart" class="btn" /></p>
+                                    </form>
+                                    
+                        </div>
+                        </div>
+                        </div>			
+            
+                    </div>
+            
+            
+            
+                <div class="row">
+                        <div class="col-md-3">
+                        <div class="product-top">
+                            <img src="img12.jpg">
+                            <div class="overlay-right">
+                                <button type="button" class="btn btn-secondary" title="Quick Shop">
+                                <i class="fa fa-eye"></i>
+                                </button>
+                                
+                                <button type="button" class="btn btn-secondary" title="Add to Wishlist">
+                                <i class="fa fa-heart-o"></i>
+                                </button>
+                                
+                                <button type="button" class="btn btn-secondary" title="Add to Cart">
+                                <i class="fa fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="product-bottom text-center">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-half-o"></i>
+                        <h3></h3>
+                        <div class="product-description" data-name="" data-price="31">
+                            
+                            <p class="product-price">&euro; 31</p>
+                            <form class="add-to-cart" action="cart.html" method="post">
+                                        <div>
+                                            <label for="qty-2">Quantity</label>
+                                            <input type="text" name="qty-2" id="qty-2" class="qty" value="1" />
+                                        </div>
+                                        <p><input type="submit" value="Add to cart" class="btn" /></p>
+                                    </form>
+                                    
+                        </div>
+                        </div>
+                        </div>
+            
+                        
+                        <div class="col-md-3">
+                        <div class="product-top">
+                            <img src="img14.jpg">
+                            <div class="overlay-right">
+                                <button type="button" class="btn btn-secondary" title="Quick Shop">
+                                <i class="fa fa-eye"></i>
+                                </button>
+                                
+                                <button type="button" class="btn btn-secondary" title="Add to Wishlist">
+                                <i class="fa fa-heart-o"></i>
+                                </button>
+                                
+                                <button type="button" class="btn btn-secondary" title="Add to Cart">
+                                <i class="fa fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="product-bottom text-center">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-half-o"></i>
+                        <h3> </h3>
+                        <div class="product-description" data-name=" " data-price="30">
+                            
+                            <p class="product-price">&euro; 30</p>
+                            <form class="add-to-cart" action="cart.html" method="post">
+                                        <div>
+                                            <label for="qty-2">Quantity</label>
+                                            <input type="text" name="qty-2" id="qty-2" class="qty" value="1" />
+                                        </div>
+                                        <p><input type="submit" value="Add to cart" class="btn" /></p>
+                                    </form>
+                                    
+                        </div>
+                        </div>
+                        </div>
+            
+            
+            
+                        <div class="col-md-3">
+                        <div class="product-top">
+                            <img src="img13.jpg">
+                            <div class="overlay-right">
+                                <button type="button" class="btn btn-secondary" title="Quick Shop">
+                                <i class="fa fa-eye"></i>
+                                </button>
+                                
+                                <button type="button" class="btn btn-secondary" title="Add to Wishlist">
+                                <i class="fa fa-heart-o"></i>
+                                </button>
+                                
+                                <button type="button" class="btn btn-secondary" title="Add to Cart">
+                                <i class="fa fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="product-bottom text-center">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-half-o"></i>
+                        <h3></h3>
+                        <div class="product-description" data-name="" data-price="16">
+                            
+                            <p class="product-price">&euro; 16</p>
+                            <form class="add-to-cart" action="cart.html" method="post">
+                                        <div>
+                                            <label for="qty-2">Quantity</label>
+                                            <input type="text" name="qty-2" id="qty-2" class="qty" value="1" />
+                                        </div>
+                                        <p><input type="submit" value="Add to cart" class="btn" /></p>
+                                    </form>
+                                    
+                        </div>
+                        </div>
+                        </div>
+            
+            
+            
+                        <div class="col-md-3">
+                        <div class="product-top">
+                            <img src="img14.jpg">
+                            <div class="overlay-right">
+                                <button type="button" class="btn btn-secondary" title="Quick Shop">
+                                <i class="fa fa-eye"></i>
+                                </button>
+                                
+                                <button type="button" class="btn btn-secondary" title="Add to Wishlist">
+                                <i class="fa fa-heart-o"></i>
+                                </button>
+                                
+                                <button type="button" class="btn btn-secondary" title="Add to Cart">
+                                <i class="fa fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="product-bottom text-center">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-half-o"></i>
+                        <h3></h3>
+                        <div class="product-description" data-name="" data-price="40">
+                            
+                            <p class="product-price">&euro; 40</p>
+                            <form class="add-to-cart" action="cart.html" method="post">
+                                        <div>
+                                            <label for="qty-2">Quantity</label>
+                                            <input type="text" name="qty-2" id="qty-2" class="qty" value="1" />
+                                        </div>
+                                        <p><input type="submit" value="Add to cart" class="btn" /></p>
+                                    </form>
+                                    
+                        </div>
+                        </div>
+                        </div>	
+                    </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="services">
+    <div class="container">
+        <h2>Our Services</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <h4>Fast Delivery</h4>
+                <p>We offer fast and reliable delivery worldwide.</p>
+            </div>
+            <div class="col-md-4">
+                <h4>Customer Support</h4>
+                <p>24/7 customer support to help with your queries.</p>
+            </div>
+            <div class="col-md-4">
+                <h4>Quality Products</h4>
+                <p>We guarantee high-quality products at the best prices.</p>
+            </div>
+        </div><!------About Section------->	
+        <section id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                <h2>About Us</h2>
+                    <div class="about-content">
+                    Welcome to Sports Compass, your number one source for all things. We're dedicated to giving you the very best of services, with a focus on dependability, customer service and uniqueness.
+    
+                    Carservpro was founded in 2024 by a dedicated team of innovators, including Nhlanhla Nwariwe,  Sinovuyo Sondara, Gratitude Malehwiti Phoku, Orinea Mulaudzi, and Kamogelo Seale. The idea for Carservpro emerged from a shared passion for improving vehicle maintenance and service accessibility in an efficient and eco-friendly way. Together, the founders combined their expertise, vision, and determination to transform what began as a small idea into a dynamic, innovative platform designed to make car care simpler and more reliable for vehicle owners everywhere.
+    
+                    Each founder brought unique skills and insights to the table, contributing to Carservpro’s core mission of providing high-quality car service solutions. From in-depth market research to understanding the latest trends in the automotive industry, the team worked tirelessly to develop a platform that puts the needs of car owners at the forefront. Their collaborative efforts have allowed Carservpro to grow rapidly and serve a global customer base, positioning the company as a trailblazer in the industry.
+                    
+                    Today, Carservpro stands as a testament to the founders’ commitment to excellence, sustainability, and innovation, making vehicle maintenance not only more convenient but also more environmentally conscious. Their vision continues to drive the company’s growth and success as they push the boundaries of what’s possible in the automotive service industry.
+    
+                    </div>
+                <button type="button" class="btn btn-primary">Read More>>
+                
+                </button>
+                
+                </div>
+                <div class="col-md-6 skills-bar">
+                <p>Delivery Rate</p>
+                <div class="progress">
+                <div class="progress-bar" style="width:85%;">85%</div>
+                </div>
+                
+                <p>Customer Growth</p>
+                <div class="progress">
+                <div class="progress-bar" style="width:75%;">75%</div>
+                </div>
+                
+                <p>Happy Employee</p>
+                <div class="progress">
+                <div class="progress-bar" style="width:90%;">90%</div>
+                </div>
+                
+                </div>
+            </div>
+            
+        </div>	
+            
+    <!------Services Section------->		
+        <section id="services">
+        
+            <div class="container">
+                <h1>Our Services</h1>
+                <div class="row services" >
+                    <div class= "col-md-4 text-center">
+                        <div class="icon">
+                        <i class="fa fa-phone"></i>
+                        </div>
+                        <h3> 24/7 Support</h3>
+                        <p>on order related queries</p>
+                    </div>
+                
+                    <div class="col-md-4 text-center">
+                        <div class="icon">
+                        <i class="fa fa-shopping-cart"></i>
+                        </div>
+                        <h3> Return within 30 days</h3>
+                        <p>of receiving your order</p>
+                    </div>
+                
+                    <div class="col-md-4 text-center">
+                        <div class="icon">
+                        <i class="fa fa-truck"></i>
+                        </div>
+                        <h3>Get free delivery</h3>
+                        <p>on orders above 99Euro</p>
+                    </div>
+                </div>
+            </div>
+        
+        </section>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section id="testimonials">
+    <div class="container">
+        <h2>Customer Testimonials</h2>
+        <div class="row">
+            <div class="col-md-4"><p>"Excellent service and fast delivery!" - John Doe</p></div>
+            <div class="col-md-4"><p>"Great products, I’m really happy with my purchase!" - Jane Smith</p></div>
+            <div class="col-md-4"><p>"I will definitely shop here again." - Mark Johnson</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer Section -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <h5>Contact Us</h5>
+                <p>Phone: 081 526 0235<br>Email: info@Carservpro.com</p>
+            </div>
+            <div class="col-md-3">
+                <h5>Follow Us</h5>
+                <p>
+                    <a href="https://www.facebook.com" target="_blank" style="text-decoration: none; color: inherit;">
+                        <i class="fa fa-facebook-official" aria-hidden="true"></i> Facebook
+                    </a><br>
+                    <a href="https://www.instagram.com" target="_blank" style="text-decoration: none; color: inherit;">
+                        <i class="fa fa-instagram" aria-hidden="true"></i> Instagram
+                    </a><br>
+                    <a href="https://twitter.com" target="_blank" style="text-decoration: none; color: inherit;">
+                        <i class="fa fa-twitter" aria-hidden="true"></i> Twitter
+                    </a>
+                </p>
+            </div>
+            <div class="col-md-3">
+                <h5>Information</h5>
+                <p>Privacy Policy<br>Terms of Service<br>Return Policy</p>
+            </div>
+            <div class="col-md-3">
+                <h5>Newsletter</h5>
+                <p>Sign up for our newsletter to stay updated.</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
 </body>
 </html>
