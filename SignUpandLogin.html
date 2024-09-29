@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Firebase Authentication and Firestore</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.13.2/firebase-analytics.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js"></script>
+</head>
+<body>
+
+<div id="signup-account">
+    <h2>Sign Up</h2>
+    <form id="form-signup">
+        <input type="text" name="email" placeholder="E-mail" required><br>
+        <input type="text" name="fullname" placeholder="Full name" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <input type="submit" value="Sign Up">
+    </form>
+
+    <h2>Sign In</h2>
+    <form id="form-signin">
+        <input type="text" name="email" placeholder="E-mail" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <input type="submit" value="Sign In">
+    </form>
+</div>
+
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBC3peygTmzI-YeZXY_E6OlUsGK-BG2vHw",
+        authDomain: "carserv-pro.firebaseapp.com",
+        projectId: "carserv-pro",
+        storageBucket: "carserv-pro.appspot.com",
+        messagingSenderId: "889182625583",
+        appId: "1:889182625583:web:072d1c9b45d69252104bda",
+        measurementId: "G-X8ZC2G1L48"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Validation functions for email and password
+    function validateEmail(email) {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailPattern.test(email);
+    }
+
+    function validatePassword(password) {
+        return password.length >= 14 && /[A-Z]/.test(password) && /[a-z]/.test(password);
+    }
+
+    // Sign-up event handler
+    document.getElementById("form-signup").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const email = document.querySelector('#form-signup input[name="email"]').value;
+        const password = document.querySelector('#form-signup input[name="password"]').value;
+        const fullName = document.querySelector('#form-signup input[name="fullname"]').value;
+
+        if (!validateEmail(email)) {
+            alert("Please enter a valid email address.");
+            return;
+        }
+
+        if (!validatePassword(password)) {
+            alert("Password must be at least 14 characters long and contain at least 1 uppercase and 1 lowercase letter.");
+            return;
+        }
+
+        // Firebase sign-up logic
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(async (userCredential) => {
+                const user = userCredential.user;
+                alert(`Account created successfully for ${fullName}.`);
+
+                // Store additional user info in Firestore
+                await setDoc(doc(db, "users", user.uid), {
+                    fullName: fullName,
+                    email: email
+                });
+            })
+            .catch((error) => {
+                alert(error.message);
+            });
+    });
+
+    // Sign-in event handler
+    document.getElementById("form-signin").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const email = document.querySelector('#form-signin input[name="email"]').value;
+        const password = document.querySelector('#form-signin input[name="password"]').value;
+
+        if (!validateEmail(email)) {
+            alert("Please enter a valid email address.");
+            return;
+        }
+
+        // Firebase sign-in logic
+        signInWithEmailAndPassword(auth, email, password)
+            .then(async (userCredential) => {
+                const user = userCredential.user;
+                alert(`Welcome back, ${user.email}!`);
+
+                // Retrieve additional user info from Firestore
+                const docSnap = await getDoc(doc(db, "users", user.uid));
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    alert(`Full Name: ${userData.fullName}`);
+                } else {
+                    alert("No user data found.");
+                }
+            })
+            .catch((error) => {
+                alert(error.message);
+            });
+    });
+</script>
+</body>
+</html>
