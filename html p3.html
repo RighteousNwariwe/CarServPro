@@ -16,6 +16,7 @@
             <option value="hard-to-find">Hard-to-find</option>
         </select>
         <button id="addPartBtn">Add Part</button>
+        <button id="updatePartBtn" style="display:none;">Update Part</button>
     </div>
     <div class="inventory-list">
         <h2>Inventory</h2>
@@ -33,8 +34,126 @@
             </tbody>
         </table>
     </div>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
-    <script src="java p3.js"></script>
+    
+    <!-- Firebase setup -->
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBC3peygTmzI-YeZXY_E6OlUsGK-BG2vHw",
+            authDomain: "carserv-pro.firebaseapp.com",
+            databaseURL: "https://carserv-pro-default-rtdb.firebaseio.com",
+            projectId: "carserv-pro",
+            storageBucket: "carserv-pro.appspot.com",
+            messagingSenderId: "889182625583",
+            appId: "1:889182625583:web:072d1c9b45d69252104bda",
+            measurementId: "G-X8ZC2G1L48"
+        };
+
+        // Initialize Firebase and Firestore
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const partNameInput = document.getElementById('partName');
+        const quantityInput = document.getElementById('quantity');
+        const categoryInput = document.getElementById('category');
+        const addPartBtn = document.getElementById('addPartBtn');
+        const updatePartBtn = document.getElementById('updatePartBtn');
+        const inventoryTableBody = document.querySelector('#inventoryTable tbody');
+
+        let currentPartId = null;  // To track the current part for editing
+
+        // Function to render inventory data in the table
+        function renderInventory(doc) {
+            const row = document.createElement('tr');
+            row.setAttribute('data-id', doc.id);
+
+            row.innerHTML = `
+                <td>${doc.data().partName}</td>
+                <td>${doc.data().quantity}</td>
+                <td>${doc.data().category}</td>
+                <td>
+                    <button onclick="editPart('${doc.id}', '${doc.data().partName}', ${doc.data().quantity}, '${doc.data().category}')">Edit</button>
+                    <button onclick="deletePart('${doc.id}')">Delete</button>
+                </td>
+            `;
+            inventoryTableBody.appendChild(row);
+        }
+
+        // Function to add a new part to Firestore
+        addPartBtn.addEventListener('click', async () => {
+            const partName = partNameInput.value;
+            const quantity = parseInt(quantityInput.value);
+            const category = categoryInput.value;
+
+            if (partName && quantity && category) {
+                await addDoc(collection(db, 'inventory'), {
+                    partName,
+                    quantity,
+                    category
+                });
+                alert('Part added successfully');
+                clearForm();
+                displayInventory();
+            } else {
+                alert('Please fill out all fields');
+            }
+        });
+
+        // Function to display inventory from Firestore
+        async function displayInventory() {
+            const querySnapshot = await getDocs(collection(db, 'inventory'));
+            inventoryTableBody.innerHTML = '';  // Clear the table
+            querySnapshot.forEach(doc => renderInventory(doc));
+        }
+
+        // Function to load the part's data for editing
+        window.editPart = function(id, partName, quantity, category) {
+            currentPartId = id;
+            partNameInput.value = partName;
+            quantityInput.value = quantity;
+            categoryInput.value = category;
+            addPartBtn.style.display = 'none';
+            updatePartBtn.style.display = 'block';
+        };
+
+        // Function to update the part in Firestore
+        updatePartBtn.addEventListener('click', async () => {
+            if (currentPartId) {
+                const partRef = doc(db, 'inventory', currentPartId);
+                await updateDoc(partRef, {
+                    partName: partNameInput.value,
+                    quantity: parseInt(quantityInput.value),
+                    category: categoryInput.value
+                });
+                alert('Part updated successfully');
+                clearForm();
+                displayInventory();
+                addPartBtn.style.display = 'block';
+                updatePartBtn.style.display = 'none';
+            }
+        });
+
+        // Function to delete a part from Firestore
+        window.deletePart = async function(id) {
+            await deleteDoc(doc(db, 'inventory', id));
+            alert('Part deleted successfully');
+            displayInventory();
+        };
+
+        // Helper function to clear the form fields
+        function clearForm() {
+            partNameInput.value = '';
+            quantityInput.value = '';
+            categoryInput.value = 'common';
+        }
+
+        // Load the inventory when the page is loaded
+        window.onload = displayInventory;
+    </script>
 </body>
 </html>

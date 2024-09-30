@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Requests & Quotation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        form {
+            margin-top: 20px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Customer Requests</h1>
+    <table id="requestsTable">
+        <thead>
+            <tr>
+                <th>Customer Name</th>
+                <th>Email</th>
+                <th>Request Details</th>
+                <th>Select</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Customer requests will be populated here -->
+        </tbody>
+    </table>
+
+    <h2>Send Quotation</h2>
+    <form id="quotation-form">
+        <label for="partName">Part Name:</label>
+        <input type="text" id="partName" required>
+
+        <label for="partQuantity">Quantity:</label>
+        <input type="number" id="partQuantity" required>
+
+        <label for="customerEmail">Customer Email:</label>
+        <input type="email" id="customerEmail" readonly required>
+
+        <label for="quotationDetails">Quotation Details:</label>
+        <textarea id="quotationDetails" required></textarea>
+
+        <button type="submit">Send Quotation</button>
+    </form>
+    
+    <div id="quotationMessage"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+        import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBC3peygTmzI-YeZXY_E6OlUsGK-BG2vHw",
+            authDomain: "carserv-pro.firebaseapp.com",
+            databaseURL: "https://carserv-pro-default-rtdb.firebaseio.com",
+            projectId: "carserv-pro",
+            storageBucket: "carserv-pro.appspot.com",
+            messagingSenderId: "889182625583",
+            appId: "1:889182625583:web:072d1c9b45d69252104bda",
+            measurementId: "G-X8ZC2G1L48"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Display customer requests in a table
+        async function loadCustomerRequests() {
+            const querySnapshot = await getDocs(collection(db, "customerRequests"));
+            const tableBody = document.getElementById('requestsTable').querySelector('tbody');
+            tableBody.innerHTML = ''; // Clear the table
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${data.customerName}</td>
+                    <td>${data.customerEmail}</td>
+                    <td>${data.requestDetails}</td>
+                    <td><button onclick="selectRequest('${data.customerEmail}')">Select</button></td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to select a request
+        window.selectRequest = (email) => {
+            document.getElementById('customerEmail').value = email;
+        };
+
+        // Quotation form submission
+        document.getElementById('quotation-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const partName = document.getElementById('partName').value;
+            const partQuantity = document.getElementById('partQuantity').value;
+            const customerEmail = document.getElementById('customerEmail').value;
+            const quotationDetails = document.getElementById('quotationDetails').value;
+
+            try {
+                // Add quotation details to the relevant customer request in Firestore
+                const querySnapshot = await getDocs(collection(db, "customerRequests"));
+                let docId = null;
+
+                querySnapshot.forEach((doc) => {
+                    if (doc.data().customerEmail === customerEmail) {
+                        docId = doc.id;
+                    }
+                });
+
+                if (docId) {
+                    const requestRef = doc(db, "customerRequests", docId);
+                    await updateDoc(requestRef, {
+                        quotationDetails: quotationDetails,
+                        partName: partName,
+                        partQuantity: partQuantity,
+                        quotationStatus: "Sent"
+                    });
+                    
+                    document.getElementById('quotationMessage').textContent = 'Quotation sent successfully!';
+
+                    // Optionally, implement email sending functionality using a backend service like Firebase Functions or an external email API
+
+                    // Clear form fields
+                    document.getElementById('quotation-form').reset();
+                } else {
+                    document.getElementById('quotationMessage').textContent = 'Customer request not found.';
+                }
+            } catch (error) {
+                console.error("Error sending quotation: ", error);
+                document.getElementById('quotationMessage').textContent = 'Error sending quotation. Please try again later.';
+            }
+        });
+
+        // Load requests once the page loads
+        window.onload = loadCustomerRequests;
+    </script>
+</body>
+</html>

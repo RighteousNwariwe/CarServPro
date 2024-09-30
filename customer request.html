@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Request</title>
+    <link rel="stylesheet" href="css p3.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Customer Request Form</h1>
+        <form id="customer-request-form">
+            <label for="customerName">Name:</label>
+            <input type="text" id="customerName" required>
+
+            <label for="customerEmail">Email:</label>
+            <input type="email" id="customerEmail" required>
+
+            <label for="requestDetails">Request Details:</label>
+            <textarea id="requestDetails" required></textarea>
+
+            <button type="submit">Submit Request</button>
+        </form>
+        <div id="responseMessage"></div>
+    </div>
+
+    <script type="module">
+        // Import necessary Firebase SDK functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBC3peygTmzI-YeZXY_E6OlUsGK-BG2vHw",
+            authDomain: "carserv-pro.firebaseapp.com",
+            databaseURL: "https://carserv-pro-default-rtdb.firebaseio.com",
+            projectId: "carserv-pro",
+            storageBucket: "carserv-pro.appspot.com",
+            messagingSenderId: "889182625583",
+            appId: "1:889182625583:web:072d1c9b45d69252104bda",
+            measurementId: "G-X8ZC2G1L48"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Handle customer request submission
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const requestForm = document.getElementById('customer-request-form');
+                const responseMessage = document.getElementById('responseMessage');
+
+                requestForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const customerName = document.getElementById('customerName').value;
+                    const customerEmail = document.getElementById('customerEmail').value;
+                    const requestDetails = document.getElementById('requestDetails').value;
+
+                    if (customerName && customerEmail && requestDetails) {
+                        try {
+                            await addDoc(collection(db, 'customerRequests'), {
+                                userId: user.uid,
+                                customerName: customerName,
+                                customerEmail: customerEmail,
+                                requestDetails: requestDetails,
+                                timestamp: new Date()
+                            });
+                            responseMessage.innerHTML = '<p>Request submitted successfully!</p>';
+                            requestForm.reset();
+                        } catch (error) {
+                            console.error("Error submitting request: ", error);
+                            responseMessage.innerHTML = '<p>Error submitting request. Please try again later.</p>';
+                        }
+                    } else {
+                        responseMessage.innerHTML = '<p>Please fill in all fields before submitting.</p>';
+                    }
+                });
+            } else {
+                window.location.href = 'signUpandLogin.html'; // Redirect to login if not authenticated
+            }
+        });
+    </script>
+</body>
+</html>
