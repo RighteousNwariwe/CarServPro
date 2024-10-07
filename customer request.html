@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Request</title>
-    <link rel="stylesheet" href="css p3.css">
+    <link rel="stylesheet" href="css/p3.css"> <!-- Ensure this path is correct -->
 </head>
 <body>
     <div class="container">
         <h1>Customer Request Form</h1>
         <form id="customer-request-form">
             <label for="customerName">Name:</label>
-            <input type="text" id="customerName" required>
+            <input type="text" id="customerName" name="customerName" required>
 
             <label for="customerEmail">Email:</label>
-            <input type="email" id="customerEmail" required>
+            <input type="email" id="customerEmail" name="customerEmail" required>
 
             <label for="requestDetails">Request Details:</label>
-            <textarea id="requestDetails" required></textarea>
+            <textarea id="requestDetails" name="requestDetails" required></textarea>
 
             <button type="submit">Submit Request</button>
         </form>
@@ -26,9 +26,10 @@
 
     <script type="module">
         // Import necessary Firebase SDK functions
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -44,42 +45,51 @@
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
         const db = getFirestore(app);
         const auth = getAuth(app);
+
+        console.log("Firebase Initialized");
 
         // Handle customer request submission
         onAuthStateChanged(auth, (user) => {
             if (user) {
+                console.log("User is authenticated:", user.uid);
                 const requestForm = document.getElementById('customer-request-form');
                 const responseMessage = document.getElementById('responseMessage');
 
                 requestForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
 
-                    const customerName = document.getElementById('customerName').value;
-                    const customerEmail = document.getElementById('customerEmail').value;
-                    const requestDetails = document.getElementById('requestDetails').value;
+                    const customerName = document.getElementById('customerName').value.trim();
+                    const customerEmail = document.getElementById('customerEmail').value.trim();
+                    const requestDetails = document.getElementById('requestDetails').value.trim();
+
+                    console.log("Form submitted with:", { customerName, customerEmail, requestDetails });
 
                     if (customerName && customerEmail && requestDetails) {
                         try {
-                            await addDoc(collection(db, 'customerRequests'), {
+                            // Add request to Firestore database
+                            const docRef = await addDoc(collection(db, 'customerRequests'), {
                                 userId: user.uid,
                                 customerName: customerName,
                                 customerEmail: customerEmail,
                                 requestDetails: requestDetails,
                                 timestamp: new Date()
                             });
-                            responseMessage.innerHTML = '<p>Request submitted successfully!</p>';
-                            requestForm.reset();
+                            console.log("Document written with ID:", docRef.id);
+                            responseMessage.innerHTML = '<p style="color: green;">Request submitted successfully!</p>';
+                            requestForm.reset(); // Clear the form
                         } catch (error) {
-                            console.error("Error submitting request: ", error);
-                            responseMessage.innerHTML = '<p>Error submitting request. Please try again later.</p>';
+                            console.error("Error submitting request:", error);
+                            responseMessage.innerHTML = '<p style="color: red;">Error submitting request. Please try again later.</p>';
                         }
                     } else {
-                        responseMessage.innerHTML = '<p>Please fill in all fields before submitting.</p>';
+                        responseMessage.innerHTML = '<p style="color: red;">Please fill in all fields before submitting.</p>';
                     }
                 });
             } else {
+                console.log("No authenticated user. Redirecting to login.");
                 window.location.href = 'signUpandLogin.html'; // Redirect to login if not authenticated
             }
         });
