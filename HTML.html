@@ -1,20 +1,102 @@
-HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Vehicle Inspection</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: url('BackgroundimageCar.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.85);
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #e60000; /* Red title */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea,
+        .form-group input[type="file"],
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1em;
+            background-color: #f5f5f5;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #e60000; /* Red button */
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #b30000; /* Darker red on hover */
+        }
+
+        #statusMessage {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+
+            button[type="submit"] {
+                font-size: 1em;
+            }
+        }
+    </style>
 </head>
 <body>
+
     <div class="container">
         <h2>Create New Vehicle Inspection</h2>
 
         <form id="inspectionForm">
             <div class="form-group">
-                <label for="ownerName">Owner Name</label>
-                <input type="text" id="ownerName" name="ownerName" class="form-control" required>
+                <label for="userSelect">Select User</label>
+                <select id="userSelect" required></select>
             </div>
 
             <div class="form-group">
@@ -48,9 +130,89 @@ HTML
         <p id="statusMessage"></p>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage.js"></script>
-    <script src="app.js"></script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-storage.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBC3peygTmzI-YeZXY_E6OlUsGK-BG2vHw",
+            authDomain: "carserv-pro.firebaseapp.com",
+            databaseURL: "https://carserv-pro-default-rtdb.firebaseio.com",
+            projectId: "carserv-pro",
+            storageBucket: "carserv-pro.appspot.com",
+            messagingSenderId: "889182625583",
+            appId: "1:889182625583:web:072d1c9b45d69252104bda",
+            measurementId: "G-X8ZC2G1L48"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // Fetch users from Firestore and populate the user select dropdown
+        async function fetchUsers() {
+            const userSelect = document.getElementById('userSelect');
+            const usersCollection = collection(db, 'users'); // Replace with your actual users collection name
+            const userDocs = await getDocs(usersCollection);
+
+            // Clear existing options
+            userSelect.innerHTML = '';
+
+            userDocs.forEach(doc => {
+                const userData = doc.data();
+                const option = document.createElement('option');
+                option.value = doc.id; // Store the user ID
+                option.textContent = `${userData.name} (${userData.email})`; // Display both name and email
+                userSelect.appendChild(option);
+            });
+        }
+
+        // Call fetchUsers when the page loads
+        fetchUsers();
+
+        // Form submission event listener
+        document.getElementById('inspectionForm').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent form from submitting the traditional way
+
+            const userId = document.getElementById('userSelect').value; // Get the selected user ID
+            const userEmail = document.getElementById('userSelect').selectedOptions[0].text.split('(')[1].replace(')', '').trim(); // Extract the email
+            const model = document.getElementById('model').value;
+            const year = parseInt(document.getElementById('year').value);
+            const details = document.getElementById('details').value;
+            const needsRepair = document.getElementById('repair').checked;
+            const imageFile = document.getElementById('imageFile').files[0];
+
+            let imageUrl = '';
+            // Upload the image to Firebase Storage if an image was selected
+            if (imageFile) {
+                const storageRef = ref(storage, `inspectionImages/${imageFile.name}`);
+                await uploadBytes(storageRef, imageFile);
+                imageUrl = await getDownloadURL(storageRef);
+            }
+
+            // Save inspection data to Firestore
+            try {
+                await addDoc(collection(db, 'inspections'), {
+                    userId, // Save the ID of the user associated with this inspection
+                    userEmail, // Save the email of the user associated with this inspection
+                    model,
+                    year,
+                    details,
+                    needsRepair,
+                    imageUrl,
+                    createdAt: serverTimestamp()
+                });
+                document.getElementById('statusMessage').textContent = 'Inspection created successfully!';
+                document.getElementById('inspectionForm').reset(); // Reset the form
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                document.getElementById('statusMessage').textContent = 'Error creating inspection. Please try again.';
+            }
+        });
+    </script>
 </body>
 </html>
