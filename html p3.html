@@ -4,10 +4,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Car Parts Inventory Management</title>
-    <link rel="stylesheet" href="css p3.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('BackgroundImageCar.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+
+        h1 {
+            background-color: rgba(0, 0, 0, 0.7); 
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            font-size: 2em;
+        }
+
+        h2 {
+            color: #e60000; /* Red color for the Inventory text */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .inventory-form {
+            background-color: rgba(255, 255, 255, 0.8); 
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #e60000; 
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #b30000;
+        }
+
+        .inventory-list {
+            max-width: 900px;
+            margin: 20px auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.9); 
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table th, table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #333; 
+            color: #fff;
+        }
+
+        table td button {
+            padding: 8px 15px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        table td button:first-child {
+            background-color: #e60000; 
+            color: white;
+        }
+
+        table td button:last-child {
+            background-color: #333; 
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .inventory-form, .inventory-list {
+                width: 95%;
+            }
+
+            table th, table td {
+                font-size: 0.9em;
+            }
+        }
+    </style>
 </head>
 <body>
+
     <h1>Car Parts Inventory Management</h1>
+
     <div class="inventory-form">
         <input type="text" id="partName" placeholder="Part Name">
         <input type="number" id="quantity" placeholder="Quantity">
@@ -18,6 +131,7 @@
         <button id="addPartBtn">Add Part</button>
         <button id="updatePartBtn" style="display:none;">Update Part</button>
     </div>
+
     <div class="inventory-list">
         <h2>Inventory</h2>
         <table id="inventoryTable">
@@ -37,11 +151,11 @@
     
     <!-- Firebase setup -->
     <script type="module">
-        // Import Firebase SDKs
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+        // Import the necessary Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
 
-        // Your Firebase configuration
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBC3peygTmzI-YeZXY_E6OlUsGK-BG2vHw",
             authDomain: "carserv-pro.firebaseapp.com",
@@ -53,107 +167,109 @@
             measurementId: "G-X8ZC2G1L48"
         };
 
-        // Initialize Firebase and Firestore
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // DOM Elements
-        const partNameInput = document.getElementById('partName');
-        const quantityInput = document.getElementById('quantity');
-        const categoryInput = document.getElementById('category');
-        const addPartBtn = document.getElementById('addPartBtn');
-        const updatePartBtn = document.getElementById('updatePartBtn');
-        const inventoryTableBody = document.querySelector('#inventoryTable tbody');
+        // Functions to handle adding and displaying parts
+        const inventoryTable = document.getElementById('inventoryTable').getElementsByTagName('tbody')[0];
 
-        let currentPartId = null;  // To track the current part for editing
-
-        // Function to render inventory data in the table
-        function renderInventory(doc) {
-            const row = document.createElement('tr');
-            row.setAttribute('data-id', doc.id);
-
-            row.innerHTML = `
-                <td>${doc.data().partName}</td>
-                <td>${doc.data().quantity}</td>
-                <td>${doc.data().category}</td>
-                <td>
-                    <button onclick="editPart('${doc.id}', '${doc.data().partName}', ${doc.data().quantity}, '${doc.data().category}')">Edit</button>
-                    <button onclick="deletePart('${doc.id}')">Delete</button>
-                </td>
-            `;
-            inventoryTableBody.appendChild(row);
+        // Fetch existing inventory data from Firestore
+        async function fetchInventory() {
+            const querySnapshot = await getDocs(collection(db, "inventory"));
+            querySnapshot.forEach((doc) => {
+                const part = { id: doc.id, ...doc.data() };
+                addRowToTable(part);
+            });
         }
 
-        // Function to add a new part to Firestore
-        addPartBtn.addEventListener('click', async () => {
-            const partName = partNameInput.value;
-            const quantity = parseInt(quantityInput.value);
-            const category = categoryInput.value;
+        // Add a new part to the inventory
+        document.getElementById('addPartBtn').addEventListener('click', async () => {
+            const partName = document.getElementById('partName').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const category = document.getElementById('category').value;
 
-            if (partName && quantity && category) {
-                await addDoc(collection(db, 'inventory'), {
+            try {
+                const docRef = await addDoc(collection(db, "inventory"), {
                     partName,
                     quantity,
                     category
                 });
-                alert('Part added successfully');
+                addRowToTable({ id: docRef.id, partName, quantity, category });
                 clearForm();
-                displayInventory();
-            } else {
-                alert('Please fill out all fields');
+            } catch (error) {
+                console.error("Error adding document: ", error);
             }
         });
 
-        // Function to display inventory from Firestore
-        async function displayInventory() {
-            const querySnapshot = await getDocs(collection(db, 'inventory'));
-            inventoryTableBody.innerHTML = '';  // Clear the table
-            querySnapshot.forEach(doc => renderInventory(doc));
+        // Function to add a row to the inventory table
+        function addRowToTable(part) {
+            const row = inventoryTable.insertRow();
+            row.innerHTML = `
+                <td>${part.partName}</td>
+                <td>${part.quantity}</td>
+                <td>${part.category}</td>
+                <td>
+                    <button onclick="editPart('${part.id}', '${part.partName}', ${part.quantity}, '${part.category}')">Edit</button>
+                    <button onclick="deletePart('${part.id}')">Delete</button>
+                </td>
+            `;
         }
 
-        // Function to load the part's data for editing
-        window.editPart = function(id, partName, quantity, category) {
-            currentPartId = id;
-            partNameInput.value = partName;
-            quantityInput.value = quantity;
-            categoryInput.value = category;
-            addPartBtn.style.display = 'none';
-            updatePartBtn.style.display = 'block';
-        };
-
-        // Function to update the part in Firestore
-        updatePartBtn.addEventListener('click', async () => {
-            if (currentPartId) {
-                const partRef = doc(db, 'inventory', currentPartId);
-                await updateDoc(partRef, {
-                    partName: partNameInput.value,
-                    quantity: parseInt(quantityInput.value),
-                    category: categoryInput.value
-                });
-                alert('Part updated successfully');
-                clearForm();
-                displayInventory();
-                addPartBtn.style.display = 'block';
-                updatePartBtn.style.display = 'none';
-            }
-        });
-
-        // Function to delete a part from Firestore
-        window.deletePart = async function(id) {
-            await deleteDoc(doc(db, 'inventory', id));
-            alert('Part deleted successfully');
-            displayInventory();
-        };
-
-        // Helper function to clear the form fields
+        // Clear the input form
         function clearForm() {
-            partNameInput.value = '';
-            quantityInput.value = '';
-            categoryInput.value = 'common';
+            document.getElementById('partName').value = '';
+            document.getElementById('quantity').value = '';
+            document.getElementById('category').value = 'common';
+            document.getElementById('updatePartBtn').style.display = 'none';
+            document.getElementById('addPartBtn').style.display = 'block';
         }
 
-        // Load the inventory when the page is loaded
-        window.onload = displayInventory;
+        // Edit part functionality
+        window.editPart = function(id, partName, quantity, category) {
+            document.getElementById('partName').value = partName;
+            document.getElementById('quantity').value = quantity;
+            document.getElementById('category').value = category;
+            document.getElementById('updatePartBtn').style.display = 'block';
+            document.getElementById('addPartBtn').style.display = 'none';
+
+            // Update button event listener
+            document.getElementById('updatePartBtn').onclick = async function() {
+                try {
+                    const partRef = doc(db, "inventory", id);
+                    await updateDoc(partRef, {
+                        partName: document.getElementById('partName').value,
+                        quantity: parseInt(document.getElementById('quantity').value),
+                        category: document.getElementById('category').value
+                    });
+                    clearForm();
+                    refreshTable();
+                } catch (error) {
+                    console.error("Error updating document: ", error);
+                }
+            };
+        };
+
+        // Delete part functionality
+        window.deletePart = async function(id) {
+            try {
+                await deleteDoc(doc(db, "inventory", id));
+                refreshTable();
+            } catch (error) {
+                console.error("Error deleting document: ", error);
+            }
+        };
+
+        // Refresh the inventory table
+        async function refreshTable() {
+            while (inventoryTable.rows.length) {
+                inventoryTable.deleteRow(0);
+            }
+            await fetchInventory();
+        }
+
+        // Initial fetch of inventory
+        fetchInventory();
     </script>
 </body>
 </html>
