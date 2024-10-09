@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Firebase Authentication and Firestore</title>
+    <title>Admin Authentication - CarServ Pro</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Firebase SDKs -->
@@ -32,10 +32,11 @@
             border-radius: 12px; /* Rounded corners */
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
             max-width: 500px; /* Limit the width to avoid it stretching too wide */
+            margin: 20px; /* Space around the content box */
         }
         
         /* Styling for the headings */
-        .content h1, .content h2 {
+        .content h1 {
             font-weight: bold;         /* Make the text bold */
             background-color: #343a40; /* Dark grey background */
             color: white;              /* White text for contrast */
@@ -112,7 +113,7 @@
             .modal-content {
                 width: 95%;
             }
-            .content h1, .content h2 {
+            .content h1 {
                 font-size: 1.5rem;
                 padding: 15px;
             }
@@ -126,32 +127,30 @@
 </head>
 <body>
 
-    <div class="content" id="signup-account">
-        <h1>Sign In</h1>
-        <form id="form-signin">
-            <input type="text" name="email" placeholder="E-mail" required><br><br>
-            <input type="password" name="password" placeholder="Password" required><br><br>
-            <input type="submit" value="Sign In"><br><br>
-            <!-- Links section for navigation -->
-            <div class="links">
-                <button type="button" id="open-signup">Don't have an account? Sign Up</button>
-            </div>
+    <!-- Admin Sign-In Section -->
+    <div class="content" id="admin-signin">
+        <h1>Admin Sign In</h1>
+        <form id="form-admin-signin">
+            <input type="text" name="admin-email" placeholder="Admin E-mail" required><br><br>
+            <input type="password" name="admin-password" placeholder="Admin Password" required><br><br>
+            <input type="submit" value="Sign In as Admin"><br><br>
         </form>
     </div>
     
-    <!-- The Modal for Sign-Up -->
-    <div id="signupModal" class="modal">
+    <!-- Optional: Admin Sign-Up Modal (If needed in future) -->
+    <!--
+    <div id="adminSignupModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h1>Sign Up</h1>
-            <form id="form-signup">
-                <input type="text" name="email" placeholder="E-mail" required><br><br>
-                <input type="text" name="fullname" placeholder="Full name" required><br><br>
-                <input type="password" name="password" placeholder="Password" required><br><br>
-                <input type="submit" value="Sign Up">
+            <h1>Admin Sign Up</h1>
+            <form id="form-admin-signup">
+                <input type="text" name="admin-email" placeholder="Admin E-mail" required><br><br>
+                <input type="password" name="admin-password" placeholder="Admin Password" required><br><br>
+                <input type="submit" value="Sign Up as Admin">
             </form>
         </div>
     </div>
+    -->
     
     <script type="module">
         // Import Firebase services
@@ -175,104 +174,25 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
     
-        // Modal handling
-        const modal = document.getElementById("signupModal");
-        const openSignupBtn = document.getElementById("open-signup");
-        const closeBtn = document.getElementsByClassName("close")[0];
+        // Predefined Admin Credentials
+        const predefinedAdminEmail = "admin@carserv-pro.com"; // Replace with your actual admin email
+        const predefinedAdminPassword = "G7fP2mL8qW5xTz"; // Generated 14-character password
     
-        // Open the modal
-        openSignupBtn.onclick = function() {
-            modal.style.display = "block";
-        }
-    
-        // Close the modal
-        closeBtn.onclick = function() {
-            modal.style.display = "none";
-        }
-    
-        // Close modal if user clicks outside the modal
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-    
-        // Validation functions for email and password
-        function validateEmail(email) {
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailPattern.test(email);
-        }
-    
-        function validatePassword(password) {
-            return password.length >= 14 && /[A-Z]/.test(password) && /[a-z]/.test(password);
-        }
-    
-        // Sign-up event handler
-        document.getElementById("form-signup").addEventListener("submit", function (event) {
+        // Admin Sign-In Logic
+        document.getElementById("form-admin-signin").addEventListener("submit", function(event) {
             event.preventDefault(); // Prevent default form submission
     
-            const email = document.querySelector('#form-signup input[name="email"]').value;
-            const password = document.querySelector('#form-signup input[name="password"]').value;
-            const fullName = document.querySelector('#form-signup input[name="fullname"]').value;
+            const adminEmail = document.querySelector('#form-admin-signin input[name="admin-email"]').value.trim();
+            const adminPassword = document.querySelector('#form-admin-signin input[name="admin-password"]').value;
     
-            if (!validateEmail(email)) {
-                alert("Please enter a valid email address.");
-                return;
+            // Validate Admin Credentials
+            if (adminEmail === predefinedAdminEmail && adminPassword === predefinedAdminPassword) {
+                alert("Admin sign-in successful!");
+                // Redirect to admin dashboard or perform admin-specific actions
+                window.location.href = "admin-dashboard.html"; // Example redirection
+            } else {
+                alert("Invalid admin credentials. Please try again.");
             }
-    
-            if (!validatePassword(password)) {
-                alert("Password must be at least 14 characters long and contain at least 1 uppercase and 1 lowercase letter.");
-                return;
-            }
-    
-            // Firebase sign-up logic
-            createUserWithEmailAndPassword(auth, email, password)
-                .then(async (userCredential) => {
-                    const user = userCredential.user;
-                    alert(`Account created successfully for ${fullName}.`);
-    
-                    // Store additional user info in Firestore
-                    await setDoc(doc(db, "users", user.uid), {
-                        fullName: fullName,
-                        email: email
-                    });
-                    modal.style.display = "none"; // Close the modal after successful sign-up
-                })
-                .catch((error) => {
-                    alert(error.message);
-                });
-        });
-    
-        // Sign-in event handler
-        document.getElementById("form-signin").addEventListener("submit", function (event) {
-            event.preventDefault(); // Prevent default form submission
-    
-            const email = document.querySelector('#form-signin input[name="email"]').value;
-            const password = document.querySelector('#form-signin input[name="password"]').value;
-    
-            if (!validateEmail(email)) {
-                alert("Please enter a valid email address.");
-                return;
-            }
-    
-            // Firebase sign-in logic
-            signInWithEmailAndPassword(auth, email, password)
-                .then(async (userCredential) => {
-                    const user = userCredential.user;
-                    alert(`Welcome back, ${user.email}!`);
-    
-                    // Retrieve additional user info from Firestore
-                    const docSnap = await getDoc(doc(db, "users", user.uid));
-                    if (docSnap.exists()) {
-                        const userData = docSnap.data();
-                        alert(`Full Name: ${userData.fullName}`);
-                    } else {
-                        alert("No user data found.");
-                    }
-                })
-                .catch((error) => {
-                    alert(error.message);
-                });
         });
     </script>
 
