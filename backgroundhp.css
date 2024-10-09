@@ -1,0 +1,60 @@
+/* General body styling */
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f9; /* Soft light background color */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+}
+
+/* Styling for the content wrapper */
+.content {
+    text-align: center; /* Center the content */
+    background-color: white; /* White background for contrast */
+    padding: 40px; /* Larger padding for breathing space */
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    max-width: 500px; /* Limit the width to avoid it stretching too wide */
+}
+
+/* Styling for the welcome message */
+.content h1 {
+    font-weight: bold;         /* Make the text bold */
+    background-color: #343a40; /* Dark grey background */
+    color: white;              /* White text for contrast */
+    padding: 20px;             /* Padding around the text */
+    border-radius: 8px;        /* Rounded corners */
+    display: inline-block;     /* Keep the width tight around the text */
+    margin-bottom: 30px;       /* Space below the heading */
+    font-size: 1.8rem;         /* Increase font size for emphasis */
+    letter-spacing: 1px;       /* Slight letter spacing for modern touch */
+}
+
+/* Styling for the links */
+.links a {
+    color: #e63946;            /* Red color for the links (modern red) */
+    text-decoration: none;     /* Remove underline */
+    font-size: 1.2rem;         /* Increase font size */
+    margin: 0 20px;            /* Add spacing between the links */
+    padding: 10px 20px;        /* Add padding for clickable area */
+    border: 2px solid #e63946; /* Border around the links */
+    border-radius: 6px;        /* Rounded corners */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+/* Hover effect for links */
+.links a:hover {
+    background-color: #e63946; /* Red background on hover */
+    color: white;              /* White text on hover */
+}
+
+/* Responsive media query for smaller screens */
+@media (max-width: 600px) {
+    .content {
+        padding: 20px; /* Reduce padding for small screens */
+        width: 90%;    /* Make content take up more space on smaller screens */
+    }
+}
