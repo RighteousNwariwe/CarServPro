@@ -8,7 +8,7 @@
 
 body {
     line-height: 1.6;
-    background-color: #f8f8f8;
+    background-color: #444; /* Darker grey background */
 }
 
 .container {
@@ -28,6 +28,8 @@ body {
     float: left;
     font-size: 1.6em;
     margin-left: 15px;
+    color: #ff7f7f; /* Red color for brand */
+    font-weight: bold;
 }
 
 .navbar-nav {
@@ -48,29 +50,40 @@ body {
 }
 
 .navbar-nav li a:hover {
-    background-color: #444;
+    background-color: #ff5722; /* Change hover color to red */
+    color: #fff; /* Keep text color white */
 }
 
 /* Hero Section Styles */
 .hero {
-    background: url('hero-bg.jpg') no-repeat center center/cover;
-    color: #fff;
+    background: url('HomepageBackground.jpeg') no-repeat center center/cover;
     padding: 100px 0;
     text-align: center;
 }
 
+.hero-content {
+    background: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+    padding: 40px; /* Add padding for better spacing */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+}
+
 .hero h1 {
     font-size: 3em;
+    color: #ff7f7f; /* Lighter shade of red for title */
     margin-bottom: 20px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Shadow for better readability */
 }
 
 .hero p {
     font-size: 1.2em;
+    color: #333; /* Dark text color */
     margin-bottom: 20px;
 }
 
 .hero .btn {
-    background: #ff5722;
+    background: #ff5722; /* Button color */
     color: #fff;
     padding: 10px 20px;
     text-decoration: none;
@@ -102,7 +115,7 @@ body {
 .service-item {
     background: #fff;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin: 15px;
     padding: 20px;
     width: 30%;
