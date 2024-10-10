@@ -1,0 +1,129 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Service Management</title>
+    <link rel="stylesheet" href="Homepage.css">
+    <!-- Link to external styles and scripts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar Bar-->
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-brand">Car Service Management</a>
+            
+        </div>
+    </nav>
+    <style>
+        /* Apply black font color */
+        header.hero h1, 
+        header.hero p, 
+        header.hero a {
+            color: black; /* Set the font color to black */
+            font-family: 'Arial', sans-serif; /* You can choose any font-family */
+        }
+    
+        /* Add animation to the h1 element */
+        header.hero h1 {
+            font-size: 3rem;
+            animation: fadeInText 3s ease-in-out, moveInText 3s ease-in-out;
+            text-align: center;
+        }
+    
+        /* Add animation to the p element */
+        header.hero p {
+            font-size: 1.5rem;
+            margin-top: 10px;
+            animation: fadeInText 4s ease-in-out;
+            text-align: center;
+        }
+    
+        /* Button hover effect */
+        header.hero a.btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border: 2px solid black;
+            background-color: transparent;
+            color: black;
+            text-decoration: none;
+            transition: all 0.3s ease-in-out;
+            animation: fadeInText 5s ease-in-out;
+            text-align: center;
+        }
+    
+        /* Button hover effect animation */
+        header.hero a.btn:hover {
+            background-color: black;
+            color: white;
+            transform: scale(1.1); /* Makes the button slightly bigger on hover */
+        }
+    
+        /* Keyframes for fading in text */
+        @keyframes fadeInText {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    
+        /* Keyframes for moving text */
+        @keyframes moveInText {
+            0% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+    </style>
+    
+
+    <!-- Hero Section -->  
+    <header class="hero">
+        <div class="container">
+            <h1>Welcome to the CarServPro Management System</h1>
+            <p>Manage your car service needs efficiently and effortlessly.</p>
+            <a href="index.html" class="btn">Get Started</a>
+        </div>
+    </header>
+    
+
+    <!-- Services Section -->
+    <section class="services">
+        <div class="container">
+            <h2>Our Services</h2>
+            <div class="service-list">
+                <div class="service-item">
+                    <i class="fas fa-tools"></i>
+                    <h3>Inventory Management</h3>
+                    <p>Monitor car parts inventory and streamline restocking operations.</p>
+                    
+                </div>
+                <div class="service-item">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <h3>Transaction Processing</h3>
+                    <p>Process customer requests, assign priorities, and generate precise quotes.</p>
+                    
+                </div>
+                <!-- Add more services as needed -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Car Service Management. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="Homepage.js"></script>
+</body>
+</html>
+
