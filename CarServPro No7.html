@@ -6,9 +6,28 @@
     <title>Car Repair Cart</title>
     <style>
         body {
-            background-color: black;
-            color: white;
-            font-family: Arial, sans-serif;
+            background-image: url('repairOptions.jgp'); /* Use the path to your background image */
+            background-size: cover; /* Cover the entire background */
+            background-position: center; /* Center the background image */
+            color: #FFFFFF; /* White text for readability */
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1200px; /* Restricts maximum width */
+            margin: auto;
+            background-color: rgba(18, 18, 18, 0.9); /* Semi-transparent dark background */
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            color: #FF5722; /* Orange color for headings */
+            text-align: center;
         }
 
         table {
@@ -18,41 +37,40 @@
         }
 
         th, td {
-            border: 1px solid white;
+            border: 1px solid #FF5722; /* Orange borders */
             padding: 10px;
             text-align: center;
         }
 
         th {
-            background-color: #333;
+            background-color: #1F1F1F; /* Darker header background */
         }
 
         button {
-            background-color: white;
-            color: black;
-            border: 1px solid white;
-            padding: 5px 10px;
+            background-color: #FF5722; /* Orange button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
         button:hover {
-            background-color: #ccc;
+            background-color: #E64A19; /* Darker orange on hover */
         }
 
-        h2 {
-            color: #ccc;
-        }
-
-        .container {
-            width: 80%;
-            margin: auto;
+        #total-price {
+            font-size: 1.5em; /* Larger font for total price */
+            text-align: right;
         }
     </style>
 </head>
 <body>
+
     <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.x/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.x/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x/firebase-firestore.js"></script>
 
     <div class="container">
         <h2>Available Car Repair Options</h2>
@@ -86,13 +104,13 @@
             </tbody>
         </table>
 
-        <h3>Total Price: <span id="total-price">$0.00</span></h3>
+        <div id="total-price">Total Price: $0.00</div>
     </div>
 
     <script type="module">
         // Firebase configuration
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.x/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/9.x/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/9.x/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "your-api-key",
@@ -108,7 +126,7 @@
 
         const repairOptionsTable = document.getElementById('repair-options');
         const cartItemsTable = document.getElementById('cart-items');
-        let totalPriceEl = document.getElementById('total-price');
+        const totalPriceEl = document.getElementById('total-price');
         let cart = [];
 
         // Fetch repair options from Firebase
@@ -135,10 +153,10 @@
         }
 
         // Render cart items and calculate total
-        function renderCart() {
+        async function renderCart() {
             cartItemsTable.innerHTML = '';
             let totalPrice = 0;
-            cart.forEach(async (item) => {
+            for (const item of cart) {
                 const docRef = collection(db, "repairOptions");
                 const docSnap = await getDoc(doc(db, docRef, item.id));
                 const repairOption = docSnap.data();
@@ -152,14 +170,13 @@
                     <td>${repairOption.advantages}</td>
                 `;
                 cartItemsTable.appendChild(tr);
-            });
-            totalPriceEl.textContent = `$${totalPrice.toFixed(2)}`;
+            }
+            totalPriceEl.textContent = `Total Price: $${totalPrice.toFixed(2)}`;
         }
 
         // Initialize the app
         fetchRepairOptions();
     </script>
 
-    
 </body>
 </html>

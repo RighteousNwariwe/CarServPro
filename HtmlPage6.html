@@ -11,56 +11,56 @@
         form {
             margin: 20px;
         }
-        label, input {
+        label, input, select, textarea {
             display: block;
             margin-bottom: 10px;
+            width: 100%;
+            padding: 8px;
+        }
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
-    <h2>Car Maintenance Suggestions</h2>
 
-    <div id="loginDiv">
-        <h3>Login</h3>
-        <form id="loginForm">
-            <label for="email">Email:</label>
-            <input type="email" id="email" required>
+    <h2>Admin: Make Maintenance Suggestions</h2>
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" required>
+    <div id="suggestionsDiv">
+        <h3>Select User and Enter Suggestion</h3>
+        <form id="suggestionForm">
+            <label for="userSelect">Select User</label>
+            <select id="userSelect" required></select>
 
-            <button type="submit">Login</button>
-        </form>
-        <p>Not registered? <button id="signupButton">Sign Up</button></p>
-    </div>
-
-    <div id="suggestionsDiv" style="display:none;">
-        <h3>Enter Car Details</h3>
-        <form id="carForm">
-            <label for="make">Make:</label>
+            <label for="make">Car Make</label>
             <input type="text" id="make" required>
 
-            <label for="model">Model:</label>
+            <label for="model">Car Model</label>
             <input type="text" id="model" required>
 
-            <label for="mileage">Mileage (km):</label>
+            <label for="mileage">Mileage (km)</label>
             <input type="number" id="mileage" required>
 
-            <button type="submit">Submit</button>
+            <label for="suggestion">Suggestion</label>
+            <textarea id="suggestion" rows="4" required></textarea>
+
+            <button type="submit">Submit Suggestion</button>
         </form>
 
-        <h3 id="suggestionsLabel">Suggestions</h3>
-        <ul id="suggestions"></ul>
-
-        <button id="logoutButton">Logout</button>
+        <p id="statusMessage"></p>
     </div>
 
-    <!-- Firebase and JavaScript -->
     <script type="module">
         // Import Firebase SDKs
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
 
         // Firebase configuration
         const firebaseConfig = {
@@ -75,110 +75,54 @@
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // DOM Elements
-        const loginDiv = document.getElementById('loginDiv');
-        const suggestionsDiv = document.getElementById('suggestionsDiv');
-        const loginForm = document.getElementById('loginForm');
-        const carForm = document.getElementById('carForm');
-        const logoutButton = document.getElementById('logoutButton');
-        const signupButton = document.getElementById('signupButton');
+        // Fetch users from Firestore and populate the user select dropdown
+        async function fetchUsers() {
+            const userSelect = document.getElementById('userSelect');
+            const usersCollection = collection(db, 'users'); // Your actual users collection name
+            const userDocs = await getDocs(usersCollection);
 
-        // Function to toggle UI based on user's auth state
-        function toggleAuthUI(user) {
-            if (user) {
-                loginDiv.style.display = 'none';
-                suggestionsDiv.style.display = 'block';
-            } else {
-                loginDiv.style.display = 'block';
-                suggestionsDiv.style.display = 'none';
-            }
+            // Clear existing options
+            userSelect.innerHTML = '';
+
+            userDocs.forEach(doc => {
+                const option = document.createElement('option');
+                option.value = doc.id; // Store the user ID
+                option.textContent = `${doc.data().name} (${doc.data().email})`; // Display user's name and email
+                userSelect.appendChild(option);
+            });
         }
 
-        // Listen for auth state changes
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                console.log("User is logged in:", user.email);
-                toggleAuthUI(user);
-            } else {
-                console.log("No user is logged in.");
-                toggleAuthUI(null);
-            }
-        });
+        // Call fetchUsers when the page loads
+        fetchUsers();
 
-        // Login event
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        // Handle form submission
+        document.getElementById('suggestionForm').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent form from submitting the traditional way
 
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    console.log("Logged in successfully:", userCredential.user.email);
-                    toggleAuthUI(userCredential.user);
-                })
-                .catch((error) => {
-                    console.error("Login failed:", error.message);
-                });
-        });
-
-        // Sign Up event
-        signupButton.addEventListener('click', () => {
-            const email = prompt("Enter your email:");
-            const password = prompt("Enter your password:");
-
-            if (email && password) {
-                createUserWithEmailAndPassword(auth, email, password)
-                    .then((userCredential) => {
-                        console.log("User registered successfully:", userCredential.user.email);
-                        toggleAuthUI(userCredential.user);
-                    })
-                    .catch((error) => {
-                        console.error("Sign-up failed:", error.message);
-                    });
-            }
-        });
-
-        // Submit car details form
-        carForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+            const userId = document.getElementById('userSelect').value;
             const make = document.getElementById('make').value;
             const model = document.getElementById('model').value;
             const mileage = parseInt(document.getElementById('mileage').value);
+            const suggestion = document.getElementById('suggestion').value;
 
-            const user = auth.currentUser;
-            if (user) {
-                try {
-                    await addDoc(collection(db, 'carSuggestions'), {
-                        userId: user.uid,
-                        email: user.email,
-                        make,
-                        model,
-                        mileage,
-                        timestamp: new Date()
-                    });
-                    alert('Car details submitted successfully');
-                    carForm.reset();
-                } catch (error) {
-                    console.error("Error adding car data:", error.message);
-                }
-            } else {
-                alert("You need to be logged in to submit car details.");
-            }
-        });
-
-        // Logout event
-        logoutButton.addEventListener('click', () => {
-            signOut(auth)
-                .then(() => {
-                    console.log("User logged out successfully.");
-                    toggleAuthUI(null);
-                })
-                .catch((error) => {
-                    console.error("Error logging out:", error.message);
+            try {
+                // Save suggestion data to Firestore under the specific user
+                await addDoc(collection(db, 'suggestions'), {
+                    userId, // Store the user ID to link the suggestion
+                    make,
+                    model,
+                    mileage,
+                    suggestion,
+                    createdAt: serverTimestamp()
                 });
+                document.getElementById('statusMessage').textContent = 'Suggestion submitted successfully!';
+                document.getElementById('suggestionForm').reset(); // Reset the form
+            } catch (error) {
+                console.error("Error submitting suggestion: ", error);
+                document.getElementById('statusMessage').textContent = 'Error submitting suggestion. Please try again.';
+            }
         });
     </script>
 </body>
