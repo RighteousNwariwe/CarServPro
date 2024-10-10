@@ -1,61 +1,124 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Your Shopping Cart</title>
-<meta charset="utf-8" />
-<link rel="stylesheet" href="style.css" media="screen" type="text/css" />
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-<script type="text/javascript" src="jquery.store.js"></script>
+    <title>Your Shopping Cart</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="style.css" media="screen" type="text/css" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 </head>
-
 <body>
 
 <div id="site">
-	<header id="masthead">
-		<h1></h1>
-	</header>
-	<div id="content">
-		<h1>Your Shopping Cart</h1>
-		<form id="shopping-cart" action="cart.html" method="post">
-			<table class="shopping-cart">
-			  <thead>
-				<tr>
-					<th scope="col">Item</th>
-					<th scope="col">Qty</th>
-					<th scope="col" colspan="2">Price</th>
-				</tr>
-			  </thead>
-			  <tbody>
-			  
-			  </tbody>
-			</table>
-			<p id="sub-total">
-				<strong>Sub Total</strong>: <span id="stotal"></span>
-			</p>
-			<ul id="shopping-cart-actions">
-				<li>
-					<input type="submit" name="update" id="update-cart" class="btn" value="Update Cart" />
-				</li>
-				<li>
-					<input type="submit" name="delete" id="empty-cart" class="btn" value="Empty Cart" />
-				</li>
-				<li>
-					<a href="Index.html" class="btn">Continue Shopping</a>
-				</li>
-				<li>
-					<a href="checkout.html" class="btn">Go To Checkout</a>
-				</li>
-			</ul>
-		</form>
-	</div>
-	
-	
-
+    <header id="masthead">
+        <h1>Your Shopping Cart</h1>
+    </header>
+    <div id="content">
+        <h1>Your Shopping Cart</h1>
+        <form id="shopping-cart" action="cart.html" method="post">
+            <table class="shopping-cart">
+                <thead>
+                    <tr>
+                        <th scope="col">Item</th>
+                        <th scope="col">Qty</th>
+                        <th scope="col" colspan="2">Price</th>
+                    </tr>
+                </thead>
+                <tbody id="cart-items">
+                    <!-- Cart items will be dynamically added here -->
+                </tbody>
+            </table>
+            <p id="sub-total">
+                <strong>Sub Total</strong>: R <span id="stotal"></span>
+            </p>
+            <ul id="shopping-cart-actions">
+                <li>
+                    <button type="button" class="btn" id="update-cart">Update Cart</button>
+                </li>
+                <li>
+                    <button type="button" class="btn" id="empty-cart">Empty Cart</button>
+                </li>
+                <li>
+                    <a href="index.html" class="btn">Continue Shopping</a>
+                </li>
+                <li>
+                    <a href="checkout.html" class="btn">Go To Checkout</a>
+                </li>
+            </ul>
+        </form>
+    </div>
 </div>
 
 <footer id="site-info">
-		Copyright &copy; 
-	</footer>
+    Copyright &copy;
+</footer>
+
+<script>
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // Function to render cart items in the table
+    function renderCart() {
+        const cartItemsContainer = document.getElementById('cart-items');
+        cartItemsContainer.innerHTML = ''; // Clear the table body
+        let subTotal = 0;
+
+        // Loop through the cart items and generate table rows
+        cart.forEach((item, index) => {
+            const row = document.createElement('tr');
+
+            // Create item name cell
+            const nameCell = document.createElement('td');
+            nameCell.textContent = item.name;
+            row.appendChild(nameCell);
+
+            // Create quantity input cell
+            const qtyCell = document.createElement('td');
+            const qtyInput = document.createElement('input');
+            qtyInput.type = 'number';
+            qtyInput.value = item.quantity;
+            qtyInput.setAttribute('data-index', index); // Set the index for updating
+            qtyCell.appendChild(qtyInput);
+            row.appendChild(qtyCell);
+
+            // Create price cell
+            const priceCell = document.createElement('td');
+            priceCell.textContent = 'R ' + (item.price * item.quantity).toFixed(2);
+            row.appendChild(priceCell);
+
+            cartItemsContainer.appendChild(row);
+
+            // Update subtotal
+            subTotal += item.price * item.quantity;
+        });
+
+        // Update the subtotal display
+        document.getElementById('stotal').textContent = subTotal.toFixed(2);
+    }
+
+    // Function to update cart quantities
+    document.getElementById('update-cart').addEventListener('click', function () {
+        const qtyInputs = document.querySelectorAll('input[type="number"]');
+        qtyInputs.forEach(input => {
+            const index = input.getAttribute('data-index');
+            const newQty = parseInt(input.value);
+            cart[index].quantity = newQty;
+            cart[index].totalPrice = cart[index].price * newQty;
+        });
+
+        // Save updated cart to localStorage and re-render
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+    });
+
+    // Function to empty the cart
+    document.getElementById('empty-cart').addEventListener('click', function () {
+        localStorage.removeItem('cart'); // Remove cart from localStorage
+        cart = []; // Clear the cart array
+        renderCart(); // Re-render the cart
+    });
+
+    // Initial render of the cart
+    renderCart();
+</script>
 
 </body>
-</html>	
+</html>

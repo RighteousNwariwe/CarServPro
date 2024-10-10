@@ -1,130 +1,167 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-<title>Checkout</title>
-<meta charset="utf-8" />
-<link rel="stylesheet" href="style.css" media="screen" type="text/css" />
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-<script type="text/javascript" src="jquery.store.js"></script>
+    <title>Checkout</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="style.css" media="screen" type="text/css" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 </head>
 
 <body id="checkout-page">
 
-<div id="site">
-	<header id="masthead">
-		<h1></h1>
-	</header>
-	<div id="content">
-		<h1>Checkout</h1>
-			<table id="checkout-cart" class="shopping-cart">
-			  <thead>
-				<tr>
-					<th scope="col">Item</th>
-					<th scope="col">Qty</th>
-					<th scope="col">Price</th>
-				</tr>
-			  </thead>
-			  <tbody>
-			  
-			  </tbody>
-			</table>
-		 <div id="pricing">
-			
-			<p id="shipping">
-				<strong>Shipping</strong>: <span id="sshipping"></span>
-			</p>
-			
-			<p id="sub-total">
-				<strong>Total</strong>: <span id="stotal"></span>
-			</p>
-		 </div>
-		 
-		 <form action="order.html" method="post" id="checkout-order-form">
-		 	<h2>Your Details</h2>
-		 	
-		 	<fieldset id="fieldset-billing">
-		 		<legend>Billing</legend>
-		 		<div>
-		 			<label for="name">Name</label>
-		 			<input type="text" name="name" id="name" data-type="string" data-message="This field cannot be empty" />
-		 		</div>
-		 		<div>
-		 			<label for="email">Email</label>
-		 			<input type="text" name="email" id="email" data-type="expression" data-message="Not a valid email address" />
-		 		</div>
-		 		<div>
-		 			<label for="city">City</label>
-		 			<input type="text" name="city" id="city" data-type="string" data-message="This field cannot be empty" />
-		 		</div>
-		 		<div>
-		 			<label for="address">Address</label>
-		 			<input type="text" name="address" id="address" data-type="string" data-message="This field cannot be empty" />
-		 		</div>
-		 		<div>
-		 			<label for="zip">ZIP Code</label>
-		 			<input type="text" name="zip" id="zip" data-type="string" data-message="This field cannot be empty" />
-		 		</div>
-		 		<div>
-		 			<label for="country">Country</label>
-		 			<select name="country" id="country" data-type="string" data-message="This field cannot be empty">
-		 				<option value="">Select</option>
-		 				<option value="De">Denmark</option>
-		 				<option value="IN">India</option>
-		 			</select>
-		 		</div>
-		 	</fieldset>
-		 	
-		 	<div id="shipping-same">Same as Billing <input type="checkbox" id="same-as-billing" value=""/></div>
-		 	
-		 	<fieldset id="fieldset-shipping">
-		 		
-		 		<legend>Shipping</legend>
-		 		
-		 		<div>
-		 			<label for="sname">Name</label>
-		 			<input type="text" name="sname" id="sname" data-type="string" data-message="This field cannot be empty" />
-		 		</div>
-		 		<div>
-		 			<label for="semail">Email</label>
-		 			<input type="text" name="semail" id="semail" data-type="expression" data-message="Not a valid email address" />
-		 		</div>
-		 		<div>
-		 			<label for="scity">City</label>
-		 			<input type="text" name="scity" id="scity" data-type="string" data-message="This field cannot be empty" />
-		 		</div>
-		 		<div>
-		 			<label for="saddress">Address</label>
-		 			<input type="text" name="saddress" id="saddress" data-type="string" data-message="This field cannot be empty" />
-		 		</div>
-		 		<div>
-		 			<label for="szip">ZIP Code</label>
-		 			<input type="text" name="szip" id="szip" data-type="string" data-message="This field cannot be empty" />
-		 		</div>
-		 		<div>
-		 			<label for="scountry">Country</label>
-		 			<select name="scountry" id="scountry" data-type="string" data-message="This field cannot be empty">
-		 				<option value="">Select</option>
-		 				<option value="De">Denmark</option>
-		 				<option value="IN">India</option>
-		 			</select>
-		 		</div>
-		 	</fieldset>
-		 	
-		 	<p><input type="submit" id="submit-order" value="Submit" class="btn" /></p>
-		 
-		 </form>
-	</div>
-	
-	
+    <div id="site">
+        <header id="masthead">
+            <h1>Checkout</h1>
+        </header>
+        <div id="content">
+            <h1>Checkout</h1>
+            <table id="checkout-cart" class="shopping-cart">
+                <thead>
+                    <tr>
+                        <th scope="col">Item</th>
+                        <th scope="col">Qty</th>
+                        <th scope="col">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Items will be dynamically added here -->
+                </tbody>
+            </table>
+            <div id="pricing">
+                <p id="shipping"><strong>Shipping</strong>: R 100.00</p>
+                <p id="sub-total"><strong>Total</strong>: <span id="stotal">R 0.00</span></p>
+            </div>
 
-</div>
+            <form action="#" method="post" id="checkout-order-form" novalidate>
+                <h2>Your Details</h2>
+                <fieldset id="fieldset-billing">
+                    <legend>Billing</legend>
+                    <div>
+                        <label for="name">Name</label>
+                        <input type="text" name="name" id="name" data-message="This field cannot be empty" required />
+                    </div>
+                    <div>
+                        <label for="email">Email</label>
+                        <input type="email" name="email" id="email" data-message="Not a valid email address" required />
+                    </div>
+                    <div>
+                        <label for="city">City</label>
+                        <input type="text" name="city" id="city" data-message="This field cannot be empty" required />
+                    </div>
+                    <div>
+                        <label for="address">Address</label>
+                        <input type="text" name="address" id="address" data-message="This field cannot be empty" required />
+                    </div>
+                    <div>
+                        <label for="zip">ZIP Code</label>
+                        <input type="text" name="zip" id="zip" pattern="^[0-9]{4,5}$" title="ZIP code must be 4-5 digits" data-message="This field cannot be empty" required />
+                    </div>
+                    <div>
+                        <label for="country">Province</label>
+                        <select name="country" id="country" data-message="This field cannot be empty" required>
+                            <option value="">Select</option>
+                            <option value="EC">Eastern Cape</option>
+                            <option value="FS">Free State</option>
+                            <option value="GP">Gauteng</option>
+                            <option value="KZN">KwaZulu-Natal</option>
+                            <option value="LP">Limpopo</option>
+                            <option value="MP">Mpumalanga</option>
+                            <option value="NC">Northern Cape</option>
+                            <option value="NW">North West</option>
+                            <option value="WC">Western Cape</option>
+                        </select>
+                    </div>
+                </fieldset>
 
-<footer id="site-info">
-		Copyright &copy;
-	</footer>
+                <!-- Hidden submit button -->
+                <input type="submit" id="submit-order" value="Submit" class="btn" style="display: none;" />
+            </form>
+        </div>
+    </div>
 
+    <footer id="site-info">Copyright &copy;</footer>
+
+    <!-- Add JavaScript to dynamically load cart data -->
+    <script>
+        // Function to load cart from localStorage and display in the checkout table
+        function loadCart() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartTable = document.querySelector('#checkout-cart tbody');
+            const subTotalElement = document.getElementById('stotal');
+            const shippingCost = 100.00;  // Fixed shipping cost
+            let subTotal = 0;
+
+            cartTable.innerHTML = '';  // Clear any existing items in the table
+
+            // Loop through each item in the cart and create a row
+            cart.forEach(item => {
+                const row = document.createElement('tr');
+
+                const nameCell = document.createElement('td');
+                nameCell.textContent = item.name;
+                row.appendChild(nameCell);
+
+                const qtyCell = document.createElement('td');
+                qtyCell.textContent = item.quantity;
+                row.appendChild(qtyCell);
+
+                const priceCell = document.createElement('td');
+                priceCell.textContent = 'R ' + (item.price * item.quantity).toFixed(2);
+                row.appendChild(priceCell);
+
+                cartTable.appendChild(row);
+
+                // Calculate the subtotal
+                subTotal += item.price * item.quantity;
+            });
+
+            // Update the subtotal and total (including shipping)
+            const total = subTotal + shippingCost;
+            subTotalElement.textContent = 'R ' + total.toFixed(2);
+        }
+
+        // Call the loadCart function on page load
+        document.addEventListener('DOMContentLoaded', loadCart);
+    </script>
+
+    <script>
+        // Function to check if all fields are filled
+        function checkFormCompletion() {
+            const requiredFields = document.querySelectorAll('#checkout-order-form [required]');
+            let allFilled = true;
+
+            // Check if each field has a value
+            requiredFields.forEach(function(field) {
+                if (!field.value) {
+                    allFilled = false;
+                }
+            });
+
+            // Show or hide the submit button based on form completion
+            const submitButton = document.getElementById('submit-order');
+            if (allFilled) {
+                submitButton.style.display = 'block';
+            } else {
+                submitButton.style.display = 'none';
+            }
+        }
+
+        // Add event listeners to each form field to check completion
+        document.querySelectorAll('#checkout-order-form [required]').forEach(function(field) {
+            field.addEventListener('input', checkFormCompletion);
+        });
+
+        // Submit event handler to redirect to order.html
+        document.getElementById('checkout-order-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Store the total amount in localStorage
+            const totalAmount = document.getElementById('stotal').innerText; // Get the total from the span
+            localStorage.setItem('checkoutTotal', totalAmount);
+
+            // Redirect to order.html
+            window.location.href = 'order.html';
+        });
+    </script>
 </body>
-</html>	
-
-    
+</html>
