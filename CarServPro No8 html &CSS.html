@@ -3,170 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collaboration Tools</title>
+    <title>Employee Messaging</title>
     <style>
-        /* Simple Black and White Theme */
         body {
-            background-color: black;
+            background: linear-gradient(135deg, #1c1c1c, #2b2b2b);
             color: white;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .topnav {
+            background-color: #2d2d2d;
+            padding: 10px;
+        }
+
+        .topnav a {
+            color: #f1f1f1;
+            text-decoration: none;
+            padding: 8px 16px;
+            font-weight: bold;
+        }
+
+        .topnav a:hover {
+            background-color: #444;
+            border-radius: 4px;
         }
 
         .container {
             width: 80%;
             margin: auto;
+            padding: 20px;
+        }
+
+        h2, h3 {
+            color: #f1f1f1;
         }
 
         .chat-box {
-            border: 1px solid white;
-            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+            padding: 15px;
             height: 300px;
             overflow-y: scroll;
-            background-color: #333;
+            background-color: #444;
             margin-bottom: 20px;
         }
 
         .chat-message {
             margin-bottom: 10px;
-            color: #ccc;
+            color: #f0f0f0;
+            padding: 10px;
+            background-color: #555;
+            border-radius: 8px;
         }
 
         .message-time {
             font-size: 0.8em;
-            color: #888;
+            color: #bbb;
         }
 
-        input[type=text], textarea, select {
+        input[type=email], input[type=text], textarea, select {
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid white;
-            background-color: #222;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: none;
+            background-color: #333;
             color: white;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
         }
 
         button {
-            background-color: white;
-            color: black;
-            border: 1px solid white;
-            padding: 5px 10px;
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
             cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
         }
 
         button:hover {
-            background-color: #ccc;
+            background-color: #e84118;
         }
 
-        h2, h3 {
-            color: #ccc;
+        hr {
+            border: 0;
+            height: 1px;
+            background: #444;
+            margin: 40px 0;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Collaboration Tools: Owners & Dealership Employees</h2>
-
-        <!-- Chat Section -->
-        <h3>Direct Messaging</h3>
-        <div class="chat-box" id="chatBox"></div>
-
-        <input id="userName" type="text" placeholder="Your Name">
-        <textarea id="message" rows="2" placeholder="Enter your message..."></textarea>
-        <select id="userRole">
-            
-            <option value="Customer">Customer</option>
-            <option value="Employee">Employee</option>
-        </select><br>
-        <button onclick="sendMessage()">Send Message</button>
-
-        <hr>
-
-        <!-- Message Board Section -->
-        <h3>Message Board (Public Updates)</h3>
-        <div id="messageBoard"></div>
-
-        <input id="boardUserName" type="text" placeholder="Your Name">
-        <textarea id="boardMessage" rows="2" placeholder="Post an update or a question..."></textarea>
-        <select id="boardUserRole">
-            <option value="Owner">Owner</option>
-            
-        </select><br>
-        <button onclick="postToBoard()">Post to Board</button>
+    <div class="topnav">
+        <a href="index.html">Back</a>
     </div>
 
+    <div class="container">
+        <h2>Employee Messaging</h2>
+        <div class="user-info">
+            <select id="clientSelect" onchange="loadClientMessages()">
+                <option value="">Select a client</option>
+            </select>
+        </div>
 
-    <!-- Include Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-database.js"></script>
-    <script src="app.js">
-        // Your Firebase configuration from the Firebase console
-const firebaseConfig = {
-    apiKey: "your-api-key",
-    authDomain: "your-auth-domain",
-    databaseURL: "your-database-url",
-    projectId: "your-project-id",
-    storageBucket: "your-storage-bucket",
-    messagingSenderId: "your-messaging-sender-id",
-    appId: "your-app-id"
-};
+        <h3>Client Messages</h3>
+        <div class="chat-box" id="chatBox"></div>
 
-// Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+        <textarea id="message" rows="2" placeholder="Enter your message..."></textarea><br>
+        <button onclick="sendMessage()">Send Message</button>
+    </div>
 
-// Send message to chat
-function sendMessage() {
-    const userName = document.getElementById('userName').value;
-    const messageText = document.getElementById('message').value;
-    const userRole = document.getElementById('userRole').value;
-    const timeStamp = new Date().toLocaleTimeString();
+    <!-- Firebase Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getDatabase, ref, push, onChildAdded, get, child } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
-    if (userName && messageText) {
-        db.ref('chatMessages').push({
-            userName: userName,
-            userRole: userRole,
-            messageText: messageText,
-            timeStamp: timeStamp
-        });
-        document.getElementById('message').value = ''; // Clear input
-    }
-}
+        const firebaseConfig = {
+            apiKey: "AIzaSyBC3peygTmzI-YeZXY_E6OlUsGK-BG2vHw",
+            authDomain: "carserv-pro.firebaseapp.com",
+            databaseURL: "https://carserv-pro-default-rtdb.firebaseio.com",
+            projectId: "carserv-pro",
+            storageBucket: "carserv-pro.appspot.com",
+            messagingSenderId: "889182625583",
+            appId: "1:889182625583:web:072d1c9b45d69252104bda",
+            measurementId: "G-X8ZC2G1L48"
+        };
 
-// Post message to the board
-function postToBoard() {
-    const userName = document.getElementById('boardUserName').value;
-    const messageText = document.getElementById('boardMessage').value;
-    const userRole = document.getElementById('boardUserRole').value;
-    const timeStamp = new Date().toLocaleTimeString();
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-    if (userName && messageText) {
-        db.ref('messageBoard').push({
-            userName: userName,
-            userRole: userRole,
-            messageText: messageText,
-            timeStamp: timeStamp
-        });
-        document.getElementById('boardMessage').value = ''; // Clear input
-    }
-}
+        function encodeEmail(email) {
+            return email.replace(/\./g, ',');
+        }
 
-// Display chat messages
-db.ref('chatMessages').on('child_added', function(snapshot) {
-    const chatBox = document.getElementById('chatBox');
-    const data = snapshot.val();
-    const messageElement = `<div class="chat-message"><strong>${data.userRole} ${data.userName}:</strong> ${data.messageText} <span class="message-time">(${data.timeStamp})</span></div>`;
-    chatBox.innerHTML += messageElement;
-    chatBox.scrollTop = chatBox.scrollHeight;
-});
+        function loadClients() {
+            const clientsRef = ref(db, 'chatMessages/');
+            get(clientsRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const clientSelect = document.getElementById('clientSelect');
+                    snapshot.forEach((childSnapshot) => {
+                        const clientEmail = childSnapshot.key.replace(/,/g, '.'); // Decode email
+                        const option = document.createElement('option');
+                        option.value = clientEmail;
+                        option.textContent = clientEmail;
+                        clientSelect.appendChild(option);
+                    });
+                } else {
+                    console.log("No clients found.");
+                }
+            }).catch((error) => {
+                console.error("Error loading clients:", error);
+            });
+        }
 
-// Display message board posts
-db.ref('messageBoard').on('child_added', function(snapshot) {
-    const messageBoard = document.getElementById('messageBoard');
-    const data = snapshot.val();
-    const messageElement = `<div class="chat-message"><strong>${data.userRole} ${data.userName}:</strong> ${data.messageText} <span class="message-time">(${data.timeStamp})</span></div>`;
-    messageBoard.innerHTML += messageElement;
-});
+        function loadClientMessages() {
+            const clientEmail = document.getElementById('clientSelect').value;
+            const encodedEmail = encodeEmail(clientEmail);
+            const chatBox = document.getElementById('chatBox');
 
+            chatBox.innerHTML = '';
+
+            onChildAdded(ref(db, 'chatMessages/' + encodedEmail), (snapshot) => {
+                const data = snapshot.val();
+                const messageElement = document.createElement('div');
+                messageElement.innerHTML = `<strong>${data.userRole} ${data.userName}:</strong> ${data.messageText} <span class="message-time">(${data.timeStamp})</span>`;
+                chatBox.appendChild(messageElement);
+                chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
+            });
+        }
+
+        function sendMessage() {
+            const clientEmail = document.getElementById('clientSelect').value;
+            const messageText = document.getElementById('message').value.trim();
+            const timeStamp = new Date().toLocaleString();
+            const userName = "Employee"; // Example: replace with actual employee name if needed
+
+            if (!clientEmail || !messageText) {
+                alert('Please select a client and enter your message.');
+                return;
+            }
+
+            const encodedEmail = encodeEmail(clientEmail);
+
+            const messagesRef = ref(db, 'chatMessages/' + encodedEmail);
+            push(messagesRef, {
+                userName: userName,
+                userRole: 'Employee',
+                messageText: messageText,
+                timeStamp: timeStamp
+            }).then(() => {
+                document.getElementById('message').value = ''; // Clear the message input
+            }).catch((error) => {
+                console.error("Error sending message:", error);
+                alert('Failed to send message. Please try again.');
+            });
+        }
+
+        window.onload = () => {
+            loadClients();
+        };
     </script>
 </body>
 </html>

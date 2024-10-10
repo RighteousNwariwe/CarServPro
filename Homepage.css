@@ -9,15 +9,53 @@
 body {
     line-height: 1.6;
     background-color: #444; /* Darker grey background */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-.container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
+/* Flex container for full-page links */
+.page-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
 }
 
-/* Navbar Styles */
+.page-link {
+    width: 30%; /* Adjust the size for responsiveness */
+    height: 30%; /* Fill the available page space */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-decoration: none;
+    background-color: #333;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin: 10px;
+}
+
+.page-link:hover {
+    background-color: #ff5722; /* Change hover color to red */
+    transform: scale(1.05); /* Add slight zoom on hover */
+}
+
+.page-link i {
+    font-size: 3em;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.page-link span {
+    font-size: 1.1em;
+    color: #fff;
+}
+
+/* Keep the navbar styles */
 .navbar {
     background-color: #333;
     color: #fff;
@@ -25,132 +63,10 @@ body {
 }
 
 .navbar .navbar-brand {
-    float: left;
     font-size: 1.6em;
     margin-left: 15px;
     color: #ff7f7f; /* Red color for brand */
     font-weight: bold;
-}
-
-.navbar-nav {
-    list-style: none;
-    float: right;
-    margin-right: 15px;
-}
-
-.navbar-nav li {
-    display: inline;
-}
-
-.navbar-nav li a {
-    color: #fff;
-    text-decoration: none;
-    padding: 10px 20px;
-    display: inline-block;
-}
-
-.navbar-nav li a:hover {
-    background-color: #ff5722; /* Change hover color to red */
-    color: #fff; /* Keep text color white */
-}
-
-/* Hero Section Styles */
-.hero {
-    background: url('HomepageBackground.jpeg') no-repeat center center/cover;
-    padding: 100px 0;
-    text-align: center;
-}
-
-.hero-content {
-    background: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
-    padding: 40px; /* Add padding for better spacing */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Shadow for depth */
-}
-
-.hero h1 {
-    font-size: 3em;
-    color: #ff7f7f; /* Lighter shade of red for title */
-    margin-bottom: 20px;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Shadow for better readability */
-}
-
-.hero p {
-    font-size: 1.2em;
-    color: #333; /* Dark text color */
-    margin-bottom: 20px;
-}
-
-.hero .btn {
-    background: #ff5722; /* Button color */
-    color: #fff;
-    padding: 10px 20px;
-    text-decoration: none;
-    font-size: 1.1em;
-    border-radius: 5px;
-}
-
-.hero .btn:hover {
-    background: #e64a19;
-}
-
-/* Services Section Styles */
-.services {
-    background-color: #f4f4f4;
-    padding: 50px 0;
-    text-align: center;
-}
-
-.services h2 {
-    margin-bottom: 30px;
-}
-
-.service-list {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-}
-
-.service-item {
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: 15px;
-    padding: 20px;
-    width: 30%;
-    transition: transform 0.3s ease;
-}
-
-.service-item i {
-    font-size: 2.5em;
-    margin-bottom: 15px;
-    color: #ff5722;
-}
-
-.service-item h3 {
-    margin-bottom: 10px;
-}
-
-.service-item p {
-    margin-bottom: 20px;
-}
-
-.service-item:hover {
-    transform: scale(1.05);
-}
-
-.btn-link {
-    background: #333;
-    color: #fff;
-    padding: 10px 15px;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background 0.3s ease;
-}
-
-.btn-link:hover {
-    background: #555;
 }
 
 /* Footer Styles */

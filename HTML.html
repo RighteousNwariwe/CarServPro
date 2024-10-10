@@ -121,7 +121,7 @@
 
             <div class="form-group">
                 <label for="imageFile">Upload Inspection Image</label>
-                <input type="file" id="imageFile" name="imageFile" class="form-control" accept="image/*">
+                <input type="file" id="imageFile" name="imageFile" class="form-control" accept="image/*" required>
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -131,12 +131,12 @@
     </div>
 
     <script type="module">
-        // Import the functions you need from the SDKs you need
+        // Import Firebase functions
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-storage.js";
 
-        // Your web app's Firebase configuration
+        // Your Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBC3peygTmzI-YeZXY_E6OlUsGK-BG2vHw",
             authDomain: "carserv-pro.firebaseapp.com",
@@ -179,7 +179,6 @@
             event.preventDefault(); // Prevent form from submitting the traditional way
 
             const userId = document.getElementById('userSelect').value; // Get the selected user ID
-            const userEmail = document.getElementById('userSelect').selectedOptions[0].text.split('(')[1].replace(')', '').trim(); // Extract the email
             const model = document.getElementById('model').value;
             const year = parseInt(document.getElementById('year').value);
             const details = document.getElementById('details').value;
@@ -198,19 +197,19 @@
             try {
                 await addDoc(collection(db, 'inspections'), {
                     userId, // Save the ID of the user associated with this inspection
-                    userEmail, // Save the email of the user associated with this inspection
                     model,
                     year,
                     details,
                     needsRepair,
-                    imageUrl,
-                    createdAt: serverTimestamp()
+                    imageUrl, // Save the image URL
+                    createdAt: serverTimestamp() // Automatically set the timestamp
                 });
-                document.getElementById('statusMessage').textContent = 'Inspection created successfully!';
+
+                alert('Inspection created successfully!'); // Popup message
                 document.getElementById('inspectionForm').reset(); // Reset the form
             } catch (error) {
                 console.error("Error adding document: ", error);
-                document.getElementById('statusMessage').textContent = 'Error creating inspection. Please try again.';
+                alert('Error creating inspection. Please try again.'); // Error popup message
             }
         });
     </script>
