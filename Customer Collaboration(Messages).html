@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collaboration Tools</title>
+    <title>Client Messaging</title>
     <style>
-        /* Cool Gradient Theme */
         body {
             background: linear-gradient(135deg, #1c1c1c, #2b2b2b);
             color: white;
@@ -14,10 +13,31 @@
             padding: 0;
         }
 
+        .topnav {
+            background-color: #2d2d2d;
+            padding: 10px;
+        }
+
+        .topnav a {
+            color: #f1f1f1;
+            text-decoration: none;
+            padding: 8px 16px;
+            font-weight: bold;
+        }
+
+        .topnav a:hover {
+            background-color: #444;
+            border-radius: 4px;
+        }
+
         .container {
             width: 80%;
             margin: auto;
             padding: 20px;
+        }
+
+        h2, h3 {
+            color: #f1f1f1;
         }
 
         .chat-box {
@@ -43,7 +63,7 @@
             color: #bbb;
         }
 
-        input[type=text], textarea {
+        input[type=email], input[type=text], textarea {
             width: 100%;
             padding: 12px;
             margin-top: 10px;
@@ -62,29 +82,18 @@
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s;
+            margin-top: 10px;
         }
 
         button:hover {
             background-color: #e84118;
         }
 
-        h2, h3 {
-            color: #f1f1f1;
-        }
-
-        .topnav {
-            background-color: #2d2d2d;
-            padding: 10px;
-        }
-
-        .topnav a {
-            color: #f1f1f1;
-            text-decoration: none;
-            padding: 8px 16px;
-        }
-
-        .topnav a:hover {
-            background-color: #444;
+        hr {
+            border: 0;
+            height: 1px;
+            background: #444;
+            margin: 40px 0;
         }
     </style>
 </head>
@@ -94,48 +103,84 @@
     </div>
 
     <div class="container">
-        <h2>Collaboration Tools: Direct Messaging</h2>
-
-        <!-- Chat Section -->
-        <h3>Customer Messages</h3>
+        <h2>Client Messaging</h2>
+        <input type="text" id="clientName" placeholder="Enter your name" required />
+        <input type="email" id="clientEmail" placeholder="Enter your email" required />
+        
+        <h3>Chat History</h3>
         <div class="chat-box" id="chatBox"></div>
 
-        <input id="userName" type="text" placeholder="Your Name" />
         <textarea id="message" rows="2" placeholder="Enter your message..."></textarea><br>
         <button onclick="sendMessage()">Send Message</button>
     </div>
 
     <!-- Firebase Integration -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-database.js"></script>
-    <script src="app.js">
-        // Firebase config and initialization as before
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
-        // Send message function: only customers can send now (no role selection needed)
-        function sendMessage() {
-            const userName = document.getElementById('userName').value;
-            const messageText = document.getElementById('message').value;
-            const timeStamp = new Date().toLocaleTimeString();
+        const firebaseConfig = {
+            apiKey: "AIzaSyBC3peygTmzI-YeZXY_E6OlUsGK-BG2vHw",
+            authDomain: "carserv-pro.firebaseapp.com",
+            databaseURL: "https://carserv-pro-default-rtdb.firebaseio.com",
+            projectId: "carserv-pro",
+            storageBucket: "carserv-pro.appspot.com",
+            messagingSenderId: "889182625583",
+            appId: "1:889182625583:web:072d1c9b45d69252104bda",
+            measurementId: "G-X8ZC2G1L48"
+        };
 
-            if (userName && messageText) {
-                db.ref('chatMessages').push({
-                    userName: userName,
-                    userRole: 'Customer',
-                    messageText: messageText,
-                    timeStamp: timeStamp
-                });
-                document.getElementById('message').value = ''; // Clear input
-            }
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        function encodeEmail(email) {
+            return email.replace(/\./g, ',');
         }
 
-        // Chat message display logic remains unchanged
-        db.ref('chatMessages').on('child_added', function(snapshot) {
+        function sendMessage() {
+            const name = document.getElementById('clientName').value.trim();
+            const email = document.getElementById('clientEmail').value.trim();
+            const messageText = document.getElementById('message').value.trim();
+
+            if (!name || !email || !messageText) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            const encodedEmail = encodeEmail(email);
+            const timeStamp = new Date().toLocaleString();
+
+            const messagesRef = ref(db, 'chatMessages/' + encodedEmail);
+            push(messagesRef, {
+                userName: name,
+                userRole: 'Client',
+                messageText: messageText,
+                timeStamp: timeStamp
+            }).then(() => {
+                document.getElementById('message').value = ''; // Clear the message input
+            }).catch((error) => {
+                console.error("Error sending message:", error);
+                alert('Failed to send message. Please try again.');
+            });
+        }
+
+        function loadChatHistory() {
+            const email = document.getElementById('clientEmail').value.trim();
+            const encodedEmail = encodeEmail(email);
             const chatBox = document.getElementById('chatBox');
-            const data = snapshot.val();
-            const messageElement = `<div class="chat-message"><strong>${data.userRole} ${data.userName}:</strong> ${data.messageText} <span class="message-time">(${data.timeStamp})</span></div>`;
-            chatBox.innerHTML += messageElement;
-            chatBox.scrollTop = chatBox.scrollHeight;
-        });
+
+            chatBox.innerHTML = '';
+
+            onChildAdded(ref(db, 'chatMessages/' + encodedEmail), (snapshot) => {
+                const data = snapshot.val();
+                const messageElement = document.createElement('div');
+                messageElement.innerHTML = `<strong>${data.userRole} ${data.userName}:</strong> ${data.messageText} <span class="message-time">(${data.timeStamp})</span>`;
+                chatBox.appendChild(messageElement);
+                chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
+            });
+        }
+
+        document.getElementById('clientEmail').addEventListener('change', loadChatHistory);
     </script>
 </body>
 </html>
