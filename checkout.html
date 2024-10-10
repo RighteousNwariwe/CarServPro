@@ -57,7 +57,7 @@
                         <input type="text" name="zip" id="zip" pattern="^[0-9]{4,5}$" title="ZIP code must be 4-5 digits" data-message="This field cannot be empty" required />
                     </div>
                     <div>
-                        <label for="country">Country</label>
+                        <label for="country">Province</label>
                         <select name="country" id="country" data-message="This field cannot be empty" required>
                             <option value="">Select</option>
                             <option value="EC">Eastern Cape</option>
@@ -73,49 +73,8 @@
                     </div>
                 </fieldset>
 
-                <div id="shipping-same">Same as Billing <input type="checkbox" id="same-as-billing" value=""/></div>
-
-                <fieldset id="fieldset-shipping">
-                    <legend>Shipping</legend>
-
-                    <div>
-                        <label for="sname">Name</label>
-                        <input type="text" name="sname" id="sname" data-type="string" data-message="This field cannot be empty" />
-                    </div>
-                    <div>
-                        <label for="semail">Email</label>
-                        <input type="text" name="semail" id="semail" data-type="expression" data-message="Not a valid email address" />
-                    </div>
-                    <div>
-                        <label for="scity">City</label>
-                        <input type="text" name="scity" id="scity" data-type="string" data-message="This field cannot be empty" />
-                    </div>
-                    <div>
-                        <label for="saddress">Address</label>
-                        <input type="text" name="saddress" id="saddress" data-type="string" data-message="This field cannot be empty" />
-                    </div>
-                    <div>
-                        <label for="szip">ZIP Code</label>
-                        <input type="text" name="szip" id="szip" pattern="^[0-9]{4,5}$" title="ZIP code must be 4-5 digits" data-message="This field cannot be empty" />
-                    </div>
-                    <div>
-                        <label for="scountry">Province</label>
-                        <select name="scountry" id="scountry" data-type="string" data-message="This field cannot be empty">
-                            <option value="">Select</option>
-                            <option value="EC">Eastern Cape</option>
-                            <option value="FS">Free State</option>
-                            <option value="GP">Gauteng</option>
-                            <option value="KZN">KwaZulu-Natal</option>
-                            <option value="LP">Limpopo</option>
-                            <option value="MP">Mpumalanga</option>
-                            <option value="NC">Northern Cape</option>
-                            <option value="NW">North West</option>
-                            <option value="WC">Western Cape</option>
-                        </select>
-                    </div>
-                </fieldset>
-
-                <p><input type="submit" id="submit-order" value="Submit" class="btn" /></p>
+                <!-- Hidden submit button -->
+                <input type="submit" id="submit-order" value="Submit" class="btn" style="display: none;" />
             </form>
         </div>
     </div>
@@ -165,112 +124,44 @@
         document.addEventListener('DOMContentLoaded', loadCart);
     </script>
 
-    <script type="text/javascript">
-        $(document).ready(function() {
-            // Function to toggle visibility of shipping fields
-            $('#same-as-billing').on('change', function() {
-                if (this.checked) {
-                    $('#fieldset-shipping').hide();
-                } else {
-                    $('#fieldset-shipping').show();
+    <script>
+        // Function to check if all fields are filled
+        function checkFormCompletion() {
+            const requiredFields = document.querySelectorAll('#checkout-order-form [required]');
+            let allFilled = true;
+
+            // Check if each field has a value
+            requiredFields.forEach(function(field) {
+                if (!field.value) {
+                    allFilled = false;
                 }
             });
+
+            // Show or hide the submit button based on form completion
+            const submitButton = document.getElementById('submit-order');
+            if (allFilled) {
+                submitButton.style.display = 'block';
+            } else {
+                submitButton.style.display = 'none';
+            }
+        }
+
+        // Add event listeners to each form field to check completion
+        document.querySelectorAll('#checkout-order-form [required]').forEach(function(field) {
+            field.addEventListener('input', checkFormCompletion);
+        });
+
+        // Submit event handler to redirect to order.html
+        document.getElementById('checkout-order-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Store the total amount in localStorage
+            const totalAmount = document.getElementById('stotal').innerText; // Get the total from the span
+            localStorage.setItem('checkoutTotal', totalAmount);
+
+            // Redirect to order.html
+            window.location.href = 'order.html';
         });
     </script>
-	    <script>
-			// JavaScript validation for billing and shipping
-			document.getElementById('checkout-order-form').addEventListener('submit', function(event) {
-				var form = this;
-				var isValid = true;
-				var requiredFields = form.querySelectorAll('[required]');
-		
-				// Validate billing fields
-				requiredFields.forEach(function(field) {
-					if (!field.value) {
-						alert(field.getAttribute('data-message'));
-						field.focus();
-						isValid = false;
-						event.preventDefault(); // Stop form submission if invalid
-					}
-				});
-		
-				// ZIP code validation
-				var zipField = document.getElementById('zip');
-				var zipPattern = /^[0-9]{4,5}$/;
-				if (!zipPattern.test(zipField.value)) {
-					alert("Please enter a valid ZIP code (4-5 digits).");
-					zipField.focus();
-					isValid = false;
-					event.preventDefault();
-				}
-		
-				// Check if a country is selected
-				var countryField = document.getElementById('country');
-				if (!countryField.value) {
-					alert("Please select a country.");
-					countryField.focus();
-					isValid = false;
-					event.preventDefault();
-				}
-		
-				// If not using same as billing, validate shipping fields
-				if (!document.getElementById('same-as-billing').checked) {
-					var shippingFields = document.querySelectorAll('#fieldset-shipping [data-message]');
-					shippingFields.forEach(function(field) {
-						if (!field.value) {
-							alert(field.getAttribute('data-message'));
-							field.focus();
-							isValid = false;
-							event.preventDefault();
-						}
-					});
-		
-					// ZIP code validation for shipping
-					var sZipField = document.getElementById('szip');
-					if (!zipPattern.test(sZipField.value)) {
-						alert("Please enter a valid ZIP code (4-5 digits) for shipping.");
-						sZipField.focus();
-						isValid = false;
-						event.preventDefault();
-					}
-		
-					// Check if a province is selected
-					var sCountryField = document.getElementById('scountry');
-					if (!sCountryField.value) {
-						alert("Please select a province.");
-						sCountryField.focus();
-						isValid = false;
-						event.preventDefault();
-					}
-				}
-		
-				// If the form is valid, store the total amount in localStorage and redirect
-				if (isValid) {
-					var totalAmount = document.getElementById('stotal').innerText; // Get the total from the span
-					localStorage.setItem('checkoutTotal', totalAmount); // Store it in localStorage
-					
-					// Redirect to order.html
-					window.location.href = 'oder';
-					
-				}
-		
-				return false; // Prevent form submission
-			});
-			</script>
-		
-			<script type="text/javascript">
-				$(document).ready(function() {
-					// Function to toggle visibility of shipping fields
-					$('#same-as-billing').on('change', function() {
-						if (this.checked) {
-							$('#fieldset-shipping').hide();
-						} else {
-							$('#fieldset-shipping').show();
-						}
-					});
-				});
-			</script>
-		
-
 </body>
 </html>
