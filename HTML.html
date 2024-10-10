@@ -101,17 +101,17 @@
 
             <div class="form-group">
                 <label for="model">Vehicle Model</label>
-                <input type="text" id="model" name="model" class="form-control" required>
+                <input type="text" id="model" name="model" required>
             </div>
 
             <div class="form-group">
                 <label for="year">Year</label>
-                <input type="number" id="year" name="year" class="form-control" required>
+                <input type="number" id="year" name="year" required>
             </div>
 
             <div class="form-group">
                 <label for="details">Inspection Details</label>
-                <textarea id="details" name="details" class="form-control" required></textarea>
+                <textarea id="details" name="details" required></textarea>
             </div>
 
             <div class="form-group">
@@ -121,10 +121,10 @@
 
             <div class="form-group">
                 <label for="imageFile">Upload Inspection Image</label>
-                <input type="file" id="imageFile" name="imageFile" class="form-control" accept="image/*" required>
+                <input type="file" id="imageFile" name="imageFile" accept="image/*" required>
             </div>
 
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit">Submit</button>
         </form>
 
         <p id="statusMessage"></p>
@@ -179,6 +179,7 @@
             event.preventDefault(); // Prevent form from submitting the traditional way
 
             const userId = document.getElementById('userSelect').value; // Get the selected user ID
+            const userEmail = ''; // To be filled in with the selected user's email, if needed
             const model = document.getElementById('model').value;
             const year = parseInt(document.getElementById('year').value);
             const details = document.getElementById('details').value;
@@ -188,20 +189,27 @@
             let imageUrl = '';
             // Upload the image to Firebase Storage if an image was selected
             if (imageFile) {
-                const storageRef = ref(storage, `inspectionImages/${imageFile.name}`);
-                await uploadBytes(storageRef, imageFile);
-                imageUrl = await getDownloadURL(storageRef);
+                const storageRef = ref(storage, `inspectionImages/${userId}_${Date.now()}_${imageFile.name}`);
+                try {
+                    await uploadBytes(storageRef, imageFile);
+                    imageUrl = await getDownloadURL(storageRef);
+                } catch (uploadError) {
+                    console.error("Error uploading image: ", uploadError);
+                    alert('Error uploading image. Please try again.');
+                    return; // Stop execution if the upload fails
+                }
             }
 
             // Save inspection data to Firestore
             try {
                 await addDoc(collection(db, 'inspections'), {
-                    userId, // Save the ID of the user associated with this inspection
+                    userId,
+                    userEmail, // You can fetch the user's email here if needed
                     model,
                     year,
                     details,
                     needsRepair,
-                    imageUrl, // Save the image URL
+                    imageUrl,
                     createdAt: serverTimestamp() // Automatically set the timestamp
                 });
 
