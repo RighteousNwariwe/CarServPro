@@ -5,8 +5,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Request</title>
     <link rel="stylesheet" href="css/p3.css"> <!-- Ensure this path is correct -->
+    
+    <style>
+        /* Modern Gradient Theme */
+        body {
+            background: linear-gradient(135deg, #2d3436, #000000);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ecf0f1;
+            margin: 0;
+            padding: 0;
+        }
+
+        .topnav {
+            background-color: #2d3436;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .topnav a {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 10px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .topnav a:hover {
+            color: #ff7675;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #2f3640;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #fdcb6e;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        input[type="text"], input[type="email"], textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #636e72;
+            background-color: #353b48;
+            color: #ecf0f1;
+            font-size: 1rem;
+        }
+
+        textarea {
+            height: 120px;
+            resize: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #ff7675;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #d63031;
+        }
+
+        #responseMessage {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1rem;
+        }
+    </style>
 </head>
 <body>
+    <div class="topnav">
+        <a href="index.html">Back</a>
+    </div>
+
     <div class="container">
         <h1>Customer Request Form</h1>
         <form id="customer-request-form">

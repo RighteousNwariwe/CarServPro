@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaboration Tools</title>
+    <style>
+        /* Cool Gradient Theme */
+        body {
+            background: linear-gradient(135deg, #1c1c1c, #2b2b2b);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .chat-box {
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            height: 300px;
+            overflow-y: scroll;
+            background-color: #444;
+            margin-bottom: 20px;
+        }
+
+        .chat-message {
+            margin-bottom: 10px;
+            color: #f0f0f0;
+            padding: 10px;
+            background-color: #555;
+            border-radius: 8px;
+        }
+
+        .message-time {
+            font-size: 0.8em;
+            color: #bbb;
+        }
+
+        input[type=text], textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: none;
+            background-color: #333;
+            color: white;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        button {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #e84118;
+        }
+
+        h2, h3 {
+            color: #f1f1f1;
+        }
+
+        .topnav {
+            background-color: #2d2d2d;
+            padding: 10px;
+        }
+
+        .topnav a {
+            color: #f1f1f1;
+            text-decoration: none;
+            padding: 8px 16px;
+        }
+
+        .topnav a:hover {
+            background-color: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="topnav">
+        <a href="index.html">Back</a>
+    </div>
+
+    <div class="container">
+        <h2>Collaboration Tools: Direct Messaging</h2>
+
+        <!-- Chat Section -->
+        <h3>Customer Messages</h3>
+        <div class="chat-box" id="chatBox"></div>
+
+        <input id="userName" type="text" placeholder="Your Name" />
+        <textarea id="message" rows="2" placeholder="Enter your message..."></textarea><br>
+        <button onclick="sendMessage()">Send Message</button>
+    </div>
+
+    <!-- Firebase Integration -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-database.js"></script>
+    <script src="app.js">
+        // Firebase config and initialization as before
+
+        // Send message function: only customers can send now (no role selection needed)
+        function sendMessage() {
+            const userName = document.getElementById('userName').value;
+            const messageText = document.getElementById('message').value;
+            const timeStamp = new Date().toLocaleTimeString();
+
+            if (userName && messageText) {
+                db.ref('chatMessages').push({
+                    userName: userName,
+                    userRole: 'Customer',
+                    messageText: messageText,
+                    timeStamp: timeStamp
+                });
+                document.getElementById('message').value = ''; // Clear input
+            }
+        }
+
+        // Chat message display logic remains unchanged
+        db.ref('chatMessages').on('child_added', function(snapshot) {
+            const chatBox = document.getElementById('chatBox');
+            const data = snapshot.val();
+            const messageElement = `<div class="chat-message"><strong>${data.userRole} ${data.userName}:</strong> ${data.messageText} <span class="message-time">(${data.timeStamp})</span></div>`;
+            chatBox.innerHTML += messageElement;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    </script>
+</body>
+</html>
